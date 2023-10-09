@@ -1933,7 +1933,7 @@ border-radius:5px;
                    </size>
                   </property>
                   <property name="cursor">
-                   <cursorShape>WhatsThisCursor</cursorShape>
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="maximum">
                    <number>10</number>

@@ -29,7 +29,8 @@ class SignalViewerApp(QMainWindow):
         self.plot_widget_1 = self.ui.Plot_1
         self.plot_widget_2 = self.ui.Plot_2
 
-        self.x_range_speed = 0.05  # Should be done by a slider or button
+        self.x_range_speed_1 = 0.05  # Should be done by a slider or button
+        self.x_range_speed_2 = 0.05  # Should be done by a slider or button
         self.x_range_1 = [0.0, 10.0]  # Initial x-axis range for plot_widget_1
         self.x_range_2 = [0.0, 10.0]   # Initial x-axis range for plot_widget_2
         self.plot_widget_1.setMouseEnabled(x=False, y=False)
@@ -66,7 +67,7 @@ class SignalViewerApp(QMainWindow):
         return
 
       # Update the x-axis range for the first plot
-      self.x_range_1 = [self.x_range_1[0] + self.x_range_speed, self.x_range_1[1] + self.x_range_speed]
+      self.x_range_1 = [self.x_range_1[0] + self.x_range_speed_1, self.x_range_1[1] + self.x_range_speed_1]
       
       # Set the updated x-axis range for the first plot
       self.plot_widget_1.setXRange(*self.x_range_1)
@@ -75,7 +76,7 @@ class SignalViewerApp(QMainWindow):
       if not self.playing_port_2:
         return
       # Update the x-axis range for the second plot
-      self.x_range_2 = [self.x_range_2[0] + self.x_range_speed, self.x_range_2[1] + self.x_range_speed]
+      self.x_range_2 = [self.x_range_2[0] + self.x_range_speed_2, self.x_range_2[1] + self.x_range_speed_2]
 
       # Set the updated x-axis range for the second plot
       self.plot_widget_2.setXRange(*self.x_range_2)
@@ -192,10 +193,10 @@ class SignalViewerApp(QMainWindow):
       self.plot_widget_2.setXRange(*self.x_range_2)
 
     def update_playback_speed_1(self, value):
-      self.x_range_speed = value / 100.0
+      self.x_range_speed_1 = value / 100.0
     
     def update_playback_speed_2(self, value):
-      self.x_range_speed = value / 100.0
+      self.x_range_speed_2 = value / 100.0
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
