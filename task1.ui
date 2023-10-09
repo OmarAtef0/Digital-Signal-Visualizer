@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>830</width>
     <height>630</height>
    </rect>
   </property>
@@ -87,6 +87,7 @@
              <font>
               <family>Arial</family>
               <pointsize>16</pointsize>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -185,7 +186,7 @@
                     <number>0</number>
                    </property>
                    <item row="0" column="1">
-                    <widget class="PlotWidget" name="Plot_3" native="true">
+                    <widget class="PlotWidget" name="Plot_1" native="true">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -209,7 +210,7 @@ margin: 3px;
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QScrollBar" name="horizontalScrollBar_3">
+                    <widget class="QScrollBar" name="HorizontalScrollBar_1">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -244,7 +245,7 @@ QScrollBar::handle:horizontal {
                     </widget>
                    </item>
                    <item row="0" column="0">
-                    <widget class="QScrollBar" name="verticalScrollBar_3">
+                    <widget class="QScrollBar" name="VerticalScrollBar_1">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -354,7 +355,7 @@ QScrollBar::handle:vertical
                     <number>0</number>
                    </property>
                    <item row="0" column="0">
-                    <widget class="QScrollBar" name="verticalScrollBar_2">
+                    <widget class="QScrollBar" name="VerticalScrollBar_2">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -390,7 +391,7 @@ QScrollBar::handle:vertical
                     </widget>
                    </item>
                    <item row="1" column="1">
-                    <widget class="QScrollBar" name="horizontalScrollBar_2">
+                    <widget class="QScrollBar" name="HorizontalScrollBar_2">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                        <horstretch>0</horstretch>
@@ -566,7 +567,7 @@ margin: 3px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="ChannelsMenu">
+                 <widget class="QComboBox" name="ChannelsMenu_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -639,7 +640,7 @@ margin: 3px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QCheckBox" name="ShowHide">
+                 <widget class="QCheckBox" name="ShowHide_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -658,7 +659,7 @@ margin: 3px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="SignalColour">
+                 <widget class="QPushButton" name="SelectColor_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -738,7 +739,7 @@ margin: 3px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="EditLabelLine">
+                 <widget class="QLineEdit" name="EditSignalLabel_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -802,7 +803,7 @@ margin: 3px;
                  <number>0</number>
                 </property>
                 <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-                 <widget class="QPushButton" name="BrowseButton">
+                 <widget class="QPushButton" name="BrowseButton_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -909,7 +910,7 @@ margin: 3px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="QPushButton" name="PlayPauseButton_1">
                   <property name="minimumSize">
                    <size>
                     <width>80</width>
@@ -924,6 +925,7 @@ margin: 3px;
                   </property>
                   <property name="font">
                    <font>
+                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -935,7 +937,7 @@ border-radius:5px;
 </string>
                   </property>
                   <property name="text">
-                   <string>Play/Pause</string>
+                   <string>Play</string>
                   </property>
                  </widget>
                 </item>
@@ -992,7 +994,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="MinRangeSlider_2">
+                 <widget class="QSlider" name="PlayBackSpeedSlider_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1005,8 +1007,23 @@ border-radius:5px;
                     <height>15</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="maximum">
-                   <number>250</number>
+                   <number>10</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>1</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>5</number>
                   </property>
                   <property name="tracking">
                    <bool>true</bool>
@@ -1075,7 +1092,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="MinRangeSlider">
+                 <widget class="QSlider" name="ZoomSlider_1">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1088,8 +1105,20 @@ border-radius:5px;
                     <height>15</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="maximum">
-                   <number>250</number>
+                   <number>10</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>5</number>
                   </property>
                   <property name="tracking">
                    <bool>true</bool>
@@ -1166,6 +1195,7 @@ border-radius:5px;
                   </property>
                   <property name="font">
                    <font>
+                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1367,6 +1397,7 @@ border-radius:5px;
                   </property>
                   <property name="font">
                    <font>
+                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1553,7 +1584,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="SignalColour_2">
+                 <widget class="QPushButton" name="SelectColor_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1633,7 +1664,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="EditLabelLine_2">
+                 <widget class="QLineEdit" name="EditSignalLabel_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1804,7 +1835,7 @@ border-radius:5px;
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="PlayPauseButton_2">
                   <property name="minimumSize">
                    <size>
                     <width>80</width>
@@ -1819,6 +1850,7 @@ border-radius:5px;
                   </property>
                   <property name="font">
                    <font>
+                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1830,7 +1862,7 @@ border-radius:5px;
 </string>
                   </property>
                   <property name="text">
-                   <string>Play/Pause</string>
+                   <string>Play</string>
                   </property>
                  </widget>
                 </item>
@@ -1887,7 +1919,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="MinRangeSlider_3">
+                 <widget class="QSlider" name="PlayBackSpeedSlider_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1900,8 +1932,14 @@ border-radius:5px;
                     <height>15</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>WhatsThisCursor</cursorShape>
+                  </property>
                   <property name="maximum">
-                   <number>250</number>
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
                   </property>
                   <property name="tracking">
                    <bool>true</bool>
@@ -1970,7 +2008,7 @@ border-radius:5px;
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="MinRangeSlider_4">
+                 <widget class="QSlider" name="ZoomSlider_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1983,8 +2021,17 @@ border-radius:5px;
                     <height>15</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="minimum">
+                   <number>0</number>
+                  </property>
                   <property name="maximum">
-                   <number>250</number>
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>5</number>
                   </property>
                   <property name="tracking">
                    <bool>true</bool>
