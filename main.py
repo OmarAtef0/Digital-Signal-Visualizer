@@ -15,7 +15,7 @@ class SignalViewerApp(QMainWindow):
         self.plot_widget_1 = self.ui.Plot_3
         self.plot_widget_2 = self.ui.Plot_2
 
-        self.x_range_speed = 0.1  # Adjust the speed as needed
+        self.x_range_speed = 0.04  # Should be a done by bar or button
         self.x_range_1 = [0, 10]  # Initial x-axis range for plot_widget_1
         self.x_range_2 = [0, 10]  # Initial x-axis range for plot_widget_2
 
@@ -44,6 +44,9 @@ class SignalViewerApp(QMainWindow):
 
     def plot_csv_data(self, file_name, graph_frame):
         try:
+
+            graph_frame.clear()
+
             with open(file_name, 'r') as csv_file:
                 csv_reader = csv.reader(csv_file)
 
@@ -72,15 +75,15 @@ class SignalViewerApp(QMainWindow):
                 # Create a PlotDataItem to display the data
                 curve = graph_frame.plot(time, amplitude, pen=(0, 255, 250))
 
-                # Set labels and titles as needed
+                # Set labels 
                 graph_frame.setLabel('bottom', text='Time')
                 graph_frame.setLabel('left', text='Amplitude')
 
                 # Start the respective timer to move the x-axis
                 if graph_frame == self.plot_widget_1:
-                    self.timer_1.start(100)  # Adjust the interval as needed
+                    self.timer_1.start(50)  
                 elif graph_frame == self.plot_widget_2:
-                    self.timer_2.start(100)  # Adjust the interval as needed
+                    self.timer_2.start(50)  
 
         except Exception as e:
             print("Error:", str(e))
