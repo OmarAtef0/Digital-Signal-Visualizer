@@ -9,6 +9,7 @@ from PyQt5.QtGui import QPen, QColor
 import numpy as np
 from pyqtgraph.graphicsItems import TextItem
 import pdf
+from PyQt5.QtCore import Qt
 
 
 class SignalViewerApp(QMainWindow):
@@ -24,6 +25,12 @@ class SignalViewerApp(QMainWindow):
         self.ui.BrowseButton_2.clicked.connect(self.browse_file_2)
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
         self.ui.PlayPauseButton_2.clicked.connect(self.toggle_playback_2)
+        self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
+        self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
+        self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
+        self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
+
+        
 
         #Zoom Range
         self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
@@ -67,6 +74,7 @@ class SignalViewerApp(QMainWindow):
         self.playing_port_2 = False
         self.zoom_level_1 = 5.0
         self.zoom_level_2 = 5.0
+        
 
     #export pdf
     def pdf(self):
@@ -139,6 +147,7 @@ class SignalViewerApp(QMainWindow):
         except Exception as e:
             print("Error:", str(e))
 
+    
     def browse_file_1(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
@@ -153,6 +162,41 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_1.setText("Pause")
             self.playing_port_1 = True
             self.plot_csv_data(file_name, self.plot_widget_1, self.curves_1)
+    # Add this function to your SignalViewerApp class
+    def scroll_graph_1_x(self, value):
+    # Calculate the new x-axis range based on the scrollbar's value
+      new_x_min = value / 100.0 * 10.0  # Assuming a range of 0-10
+      new_x_max = new_x_min
+
+      # Set the updated x-axis range for the first plot
+      self.x_range_1 = [new_x_min, new_x_max]
+      self.plot_widget_1.setXRange(*self.x_range_1)
+      
+
+      # Toggle the visibility of the signal based on the scrollbar's value
+     
+    def scroll_graph_2_x(self, value):
+    # Calculate the new x-axis range based on the scrollbar's value
+      new_x_min = value / 100.0 * 10.0  # Assuming a range of 0-10
+      new_x_max = new_x_min
+
+      # Set the updated x-axis range for the first plot
+      self.x_range_2 = [new_x_min, new_x_max]
+      self.plot_widget_2.setXRange(*self.x_range_2)
+      
+
+        
+    def scroll_graph_1_y(self, value):
+    # Calculate the new y-axis range based on the vertical scrollbar's value
+      new_y_min = value / 100.0 * 10.0  # Assuming a range of 0-10
+      new_y_max = new_y_min + 10.0 * self.zoom_level_1
+
+      # Set the updated y-axis range for the first plot
+      self.y_range_1 = [new_y_min, new_y_max]
+      self.plot_widget_1.setYRange(*self.y_range_1)
+    
+    
+
 
     def browse_file_2(self):
         options = QFileDialog.Options()
@@ -204,6 +248,12 @@ class SignalViewerApp(QMainWindow):
 
     def update_playback_speed_1(self, value):
       self.x_range_speed_1 = value / 100.0
+
+    def toggle_visibility_1(self, state):
+        if state == Qt.Checked:
+            self.plot_widget_1.show()
+        else:
+            self.plot_widget_1.hide()
     
     def update_playback_speed_2(self, value):
       self.x_range_speed_2 = value / 100.0
