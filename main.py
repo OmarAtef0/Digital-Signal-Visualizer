@@ -1,5 +1,6 @@
 import sys
 import csv
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider
 from PyQt5.QtCore import QTimer
 from task1 import Ui_MainWindow
@@ -7,6 +8,7 @@ from pyqtgraph import PlotWidget
 from PyQt5.QtGui import QPen, QColor 
 import numpy as np
 from pyqtgraph.graphicsItems import TextItem
+import pdf
 
 
 class SignalViewerApp(QMainWindow):
@@ -15,19 +17,23 @@ class SignalViewerApp(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  # Set up the UI
 
+        #pdf
+        self.ui.pdfButton.clicked.connect(self.pdf)
+
         self.ui.BrowseButton_1.clicked.connect(self.browse_file_1)
         self.ui.BrowseButton_2.clicked.connect(self.browse_file_2)
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
         self.ui.PlayPauseButton_2.clicked.connect(self.toggle_playback_2)
+
         #Zoom Range
         self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
         self.ui.ZoomSlider_2.valueChanged.connect(self.update_zoom_2)
 
-        self.ui.PlayBackSpeedSlider_1.valueChanged.connect(self.update_playback_speed_1)
-        self.ui.PlayBackSpeedSlider_2.valueChanged.connect(self.update_playback_speed_2)
+        self.ui.SpeedSlider_1.valueChanged.connect(self.update_playback_speed_1)
+        self.ui.SpeedSlider_2.valueChanged.connect(self.update_playback_speed_2)
 
-        self.plot_widget_1 = self.ui.Plot_1
-        self.plot_widget_2 = self.ui.Plot_2
+        self.plot_widget_1 = self.ui.graph1
+        self.plot_widget_2 = self.ui.graph2
 
         self.x_range_speed_1 = 0.05  # Should be done by a slider or button
         self.x_range_speed_2 = 0.05  # Should be done by a slider or button
@@ -61,6 +67,10 @@ class SignalViewerApp(QMainWindow):
         self.playing_port_2 = False
         self.zoom_level_1 = 5.0
         self.zoom_level_2 = 5.0
+
+    #export pdf
+    def pdf(self):
+      pdf.Exporter(self)
 
     def update_plot_1(self):
       if not self.playing_port_1:
@@ -201,5 +211,7 @@ class SignalViewerApp(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = SignalViewerApp()
+    window.setWindowTitle("Digital Signal Viewer")
+    app.setWindowIcon(QIcon("logo.png"))
     window.show()
     sys.exit(app.exec_())
