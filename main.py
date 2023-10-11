@@ -1,7 +1,8 @@
 import sys
 import csv
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider
+from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider, QColorDialog
 from PyQt5.QtCore import QTimer
 from task1 import Ui_MainWindow
 from pyqtgraph import PlotWidget
@@ -10,9 +11,8 @@ import numpy as np
 from pyqtgraph.graphicsItems import TextItem
 import pdf
 from PyQt5.QtCore import Qt
-
-
 class SignalViewerApp(QMainWindow):
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
@@ -21,26 +21,45 @@ class SignalViewerApp(QMainWindow):
         #pdf
         self.ui.pdfButton.clicked.connect(self.pdf)
 
+        #browse
         self.ui.BrowseButton_1.clicked.connect(self.browse_file_1)
         self.ui.BrowseButton_2.clicked.connect(self.browse_file_2)
+
+        #play/pause
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
         self.ui.PlayPauseButton_2.clicked.connect(self.toggle_playback_2)
+
+        # scroll
         self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
         self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
-        self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
         self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
 
+        #show/hide
+        self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
         
-
-        #Zoom Range
+        #zoom
         self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
         self.ui.ZoomSlider_2.valueChanged.connect(self.update_zoom_2)
 
+        #speed
         self.ui.SpeedSlider_1.valueChanged.connect(self.update_playback_speed_1)
         self.ui.SpeedSlider_2.valueChanged.connect(self.update_playback_speed_2)
 
+        #color
+        self.ui.SelectColor_1.clicked.connect(self.showColorSelector)
+        self.ui.SelectColor_2.clicked.connect(self.showColorSelector)
+
+        #label
+        self.ui.editLabel_1.textChanged.connect(self.onLineEditextChange)
+        self.ui.editLabel_2.textChanged.connect(self.onLineEditextChange)
+        
+        #plot
         self.plot_widget_1 = self.ui.graph1
         self.plot_widget_2 = self.ui.graph2
+
+        #channels
+        self.ui.channelsMenu_1.currentIndexChanged.connect(self.onChannelChange1)
+        self.ui.channelsMenu_2.currentIndexChanged.connect(self.onChannelChange2)
 
         self.x_range_speed_1 = 0.05  # Should be done by a slider or button
         self.x_range_speed_2 = 0.05  # Should be done by a slider or button
@@ -62,6 +81,8 @@ class SignalViewerApp(QMainWindow):
         self.curves_1 = []
         self.curves_2 = []
 
+        self.selectedSignalIndex = 0
+
         #Static colors for now, should add a color palette
         self.colors = [QColor(255, 0, 0),  # Red
                        QColor(0, 255, 0),  # Green
@@ -75,6 +96,30 @@ class SignalViewerApp(QMainWindow):
         self.zoom_level_1 = 5.0
         self.zoom_level_2 = 5.0
         
+    #color
+    def showColorSelector(self):
+        color_dialog = QColorDialog(self)
+        color = color_dialog.getColor()
+        if color.isValid():
+            print("Selected color:", color.name())
+        else:
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Color is invalid!')
+
+    #label
+    def onLineEditextChange(self, text):
+          print("label:", text)
+          #connected selected signal to this label
+
+    #detect change in selected channel
+    def onChannelChange1(self):
+        selected_text = self.ui.channelsMenu_1.currentText()
+        selectedSignalIndex = selected_text[-1]
+        print(f"selectedSignalIndex: {selectedSignalIndex}")
+    
+    def onChannelChange2(self):
+        selected_text = self.ui.channelsMenu_2.currentText()
+        selectedSignalIndex = int(selected_text[-1]) + 5
+        print(f"selectedSignalIndex: {selectedSignalIndex}")
 
     #export pdf
     def pdf(self):
@@ -154,14 +199,15 @@ class SignalViewerApp(QMainWindow):
         options |= QFileDialog.ExistingFiles
 
 
-        file_name, _ = QFileDialog.getOpenFileName(
+        filename, _ = QFileDialog.getOpenFileName(
             self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options
         )
 
-        if file_name:
+        if filename:
             self.ui.PlayPauseButton_1.setText("Pause")
             self.playing_port_1 = True
-            self.plot_csv_data(file_name, self.plot_widget_1, self.curves_1)
+            self.plot_csv_data(filename, self.plot_widget_1, self.curves_1)
+          
     # Add this function to your SignalViewerApp class
     def scroll_graph_1_x(self, value):
     # Calculate the new x-axis range based on the scrollbar's value
@@ -195,9 +241,7 @@ class SignalViewerApp(QMainWindow):
       self.y_range_1 = [new_y_min, new_y_max]
       self.plot_widget_1.setYRange(*self.y_range_1)
     
-    
-
-
+  
     def browse_file_2(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
