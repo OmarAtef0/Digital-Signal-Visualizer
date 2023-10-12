@@ -417,25 +417,39 @@ class SignalViewerApp(QMainWindow):
     def browse_file_2(self):
         self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2)
 
-
+    
+   
+    # Calculate the new x-axis range based on the scrollbar's value
     def scroll_graph_1_x(self, value):
     # Calculate the new x-axis range based on the scrollbar's value
-      new_x_min = value / 100.0 * 10.0  # Assuming a range of 0-10
-      new_x_max = new_x_min
+      scroll_window = self.x_range_1[1] - self.x_range_1[0]
+      new_x_min = value / 100.0 * (scroll_window)
+      new_x_max = new_x_min + scroll_window
+
+      # Ensure the new_x_min doesn't go below zero
+      if new_x_min < 0:
+          new_x_min = 0
+          new_x_max = scroll_window
 
       # Set the updated x-axis range for the first plot
       self.x_range_1 = [new_x_min, new_x_max]
       self.plot_widget_1.setXRange(*self.x_range_1)
-     
+
+
     def scroll_graph_2_x(self, value):
     # Calculate the new x-axis range based on the scrollbar's value
-      new_x_min = value / 100.0 * 10.0  # Assuming a range of 0-10
-      new_x_max = new_x_min
+      scroll_window = self.x_range_2[1] - self.x_range_2[0]
+      new_x_min = value / 100.0 * (scroll_window)
+      new_x_max = new_x_min + scroll_window
 
-      # Set the updated x-axis range for the second plot
+      # Ensure the new_x_min doesn't go below zero
+      if new_x_min < 0:
+          new_x_min = 0
+          new_x_max = scroll_window
+
+      # Set the updated x-axis range for the first plot
       self.x_range_2 = [new_x_min, new_x_max]
       self.plot_widget_2.setXRange(*self.x_range_2)
-      
 
         
     def scroll_graph_1_y(self, value):
