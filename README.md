@@ -51,6 +51,9 @@ To run the application, follow these steps:
 
 ## Team Members
 Hazem Rafaat
+
 Ahmed Khaled
+
 Omar Atef
+
 Ibrahim Emad
