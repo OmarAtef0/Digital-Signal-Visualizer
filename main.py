@@ -485,14 +485,3 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon("img/logo.png"))
     window.show()
     sys.exit(app.exec_())
-
-#Removed the channel_names_list & it's unnecessary rn
-    # def update_channel_combobox(self, graph_frame, channel_names_list):
-    #     if graph_frame == self.plot_widget_1:
-    #         combo_box = self.ui.channelsMenu_1
-    #     elif graph_frame == self.plot_widget_2:
-    #         combo_box = self.ui.channelsMenu_2
-
-    #     combo_box.clear()
-    #     combo_box.addItems(channel_names_list)
-    
