@@ -6,14 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>695</height>
+    <width>900</width>
+    <height>750</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>850</width>
+    <height>700</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>850</width>
+     <height>700</height>
+    </size>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QFrame" name="all">
@@ -47,6 +59,12 @@
        </property>
        <item>
         <widget class="QFrame" name="upper">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>810</width>
@@ -137,7 +155,6 @@
                 <font>
                  <family>Arial</family>
                  <pointsize>18</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -575,7 +592,7 @@ margin: 3px;
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>300</height>
           </size>
          </property>
          <property name="frameShape">
@@ -1070,7 +1087,6 @@ margin: 3px;
                </property>
                <property name="font">
                 <font>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -1432,7 +1448,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1451,7 +1466,7 @@ QPushButton:hover {
 </string>
                   </property>
                   <property name="text">
-                   <string>Link/Unlink</string>
+                   <string>Link</string>
                   </property>
                  </widget>
                 </item>
@@ -1477,7 +1492,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1758,7 +1772,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -2290,7 +2303,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>

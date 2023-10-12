@@ -14,8 +14,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(834, 695)
+        MainWindow.resize(900, 750)
+        MainWindow.setMinimumSize(QtCore.QSize(850, 700))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setMinimumSize(QtCore.QSize(850, 700))
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -29,6 +31,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.upper = QtWidgets.QFrame(self.all)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.upper.sizePolicy().hasHeightForWidth())
+        self.upper.setSizePolicy(sizePolicy)
         self.upper.setMinimumSize(QtCore.QSize(810, 365))
         self.upper.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.upper.setFrameShape(QtWidgets.QFrame.Box)
@@ -66,7 +73,6 @@ class Ui_MainWindow(object):
         font.setFamily("Arial")
         font.setPointSize(18)
         font.setBold(True)
-        font.setWeight(75)
         self.appTitle.setFont(font)
         self.appTitle.setAlignment(QtCore.Qt.AlignCenter)
         self.appTitle.setObjectName("appTitle")
@@ -263,7 +269,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.graphsFrame)
         self.verticalLayout_3.addWidget(self.upper)
         self.lower = QtWidgets.QFrame(self.all)
-        self.lower.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.lower.setMaximumSize(QtCore.QSize(16777215, 300))
         self.lower.setFrameShape(QtWidgets.QFrame.Box)
         self.lower.setFrameShadow(QtWidgets.QFrame.Raised)
         self.lower.setObjectName("lower")
@@ -448,7 +454,6 @@ class Ui_MainWindow(object):
         self.PlayPauseButton_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
         self.PlayPauseButton_1.setFont(font)
         self.PlayPauseButton_1.setStyleSheet("\n"
 "\n"
@@ -589,7 +594,6 @@ class Ui_MainWindow(object):
         self.linkButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
         self.linkButton.setFont(font)
         self.linkButton.setStyleSheet("\n"
 "\n"
@@ -615,7 +619,6 @@ class Ui_MainWindow(object):
         self.PlayPauseButton_3.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
         self.PlayPauseButton_3.setFont(font)
         self.PlayPauseButton_3.setStyleSheet("\n"
 "\n"
@@ -740,7 +743,6 @@ class Ui_MainWindow(object):
         self.pdfButton.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
         self.pdfButton.setFont(font)
         self.pdfButton.setStyleSheet("\n"
 "\n"
@@ -945,7 +947,6 @@ class Ui_MainWindow(object):
         self.PlayPauseButton_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
         font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
         self.PlayPauseButton_2.setFont(font)
         self.PlayPauseButton_2.setStyleSheet("\n"
 "\n"
@@ -1065,7 +1066,7 @@ class Ui_MainWindow(object):
         self.ResetButton_1.setText(_translate("MainWindow", "Reset"))
         self.label_7.setText(_translate("MainWindow", "Speed:"))
         self.label_6.setText(_translate("MainWindow", "Zoom:"))
-        self.linkButton.setText(_translate("MainWindow", "Link/Unlink"))
+        self.linkButton.setText(_translate("MainWindow", "Link"))
         self.PlayPauseButton_3.setText(_translate("MainWindow", "Play"))
         self.label_12.setText(_translate("MainWindow", "Speed:"))
         self.label_11.setText(_translate("MainWindow", "Zoom:"))
