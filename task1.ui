@@ -601,7 +601,7 @@ margin: 3px;
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="ControlPanel1">
+           <widget class="QFrame" name="ControlPanel_1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1794,7 +1794,7 @@ QPushButton:hover {
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="ControlPanel2">
+           <widget class="QFrame" name="ControlPanel_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
