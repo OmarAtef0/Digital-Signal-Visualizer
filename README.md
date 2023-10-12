@@ -1,4 +1,3 @@
-# DSP_task_1
 # Multi-Port Multi-Channel Signal Viewer Application
 
 ## Overview
