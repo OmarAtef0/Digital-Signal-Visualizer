@@ -42,21 +42,13 @@ The application enforces boundary conditions to prevent scrolling or panning bey
 - Data statistics can include mean, standard deviation, duration, minimum, and maximum values for each signal.
 - The report is generated as a PDF file with organized tables and layouts.
 
-## Getting Started
+## How to run the program
 
 To run the application, follow these steps:
 
 1. Ensure you have Python and the required libraries (PyQt, NumPy, pyqtgraph) installed.
 2. Clone or download this repository.
-3. Run the Python script to launch the application.
-
-
-## Usage
-
-- Open signal files using the "Open" button.
-- Use the controls in the UI to manipulate the signals.
-- Link or unlink the two graphs.
-- Generate reports by selecting "Export PDF"
+3. Run the Python code to launch the application.
 
 ## Team Members
 Hazem Rafaat
