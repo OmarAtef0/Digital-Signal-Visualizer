@@ -212,13 +212,27 @@ class SignalViewerApp(QMainWindow):
       
       # Set the updated x-axis range for the first plot
       self.plot_widget_1.setXRange(*self.x_range_1)
+      if not self.playing_port_1:
+        return
+
+      # Update the x-axis range for the first plot
+      self.x_range_1 = [self.x_range_1[0] + self.x_range_speed_1, self.x_range_1[1] + self.x_range_speed_1]
+      
+      # Set the updated x-axis range for the first plot
+      self.plot_widget_1.setXRange(*self.x_range_1)
 
     def update_plot_2(self):
       if not self.playing_port_2:
         return
       # Update the x-axis range for the second plot
       self.x_range_2 = [self.x_range_2[0] + self.x_range_speed_2, self.x_range_2[1] + self.x_range_speed_2]
+      if not self.playing_port_2:
+        return
+      # Update the x-axis range for the second plot
+      self.x_range_2 = [self.x_range_2[0] + self.x_range_speed_2, self.x_range_2[1] + self.x_range_speed_2]
 
+      # Set the updated x-axis range for the second plot
+      self.plot_widget_2.setXRange(*self.x_range_2)
       # Set the updated x-axis range for the second plot
       self.plot_widget_2.setXRange(*self.x_range_2)
 
@@ -322,6 +336,7 @@ class SignalViewerApp(QMainWindow):
         options |= QFileDialog.ExistingFiles
 
 
+
         file_name, _ = QFileDialog.getOpenFileName(
             self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)", options=options
         )
@@ -422,6 +437,46 @@ class SignalViewerApp(QMainWindow):
     #     # Force a redraw of the plot to reflect the changes
     #     self.plot_widget_1.replot()
 
+
+    def toggle_playback_1(self):
+      # Toggle the playing state
+      self.playing_port_1 = not self.playing_port_1
+      # Update the text of the "Pause/Resume" button
+      if self.playing_port_1:
+          self.ui.PlayPauseButton_1.setText("Pause")
+      else:
+          self.ui.PlayPauseButton_1.setText("Play")
+    
+    def toggle_playback_2(self):
+      # Toggle the playing state
+      self.playing_port_2 = not self.playing_port_2
+      # Update the text of the "Pause/Resume" button
+      if self.playing_port_2:
+          self.ui.PlayPauseButton_2.setText("Pause")
+      else:
+          self.ui.PlayPauseButton_2.setText("Play")
+
+    def update_zoom_1(self, value):
+      self.zoom_level_1 = value / 100.0
+
+      # Update the x-axis range of the plots
+      self.x_range_1 = [0, 10 * self.zoom_level_1]
+
+      self.plot_widget_1.setXRange(*self.x_range_1) #Current POS
+
+    def update_zoom_2(self, value):
+      self.zoom_level_2 = value / 10.0
+
+      # Update the x-axis range of the plots
+      self.x_range_2 = [0, 10 * self.zoom_level_2]
+
+      self.plot_widget_2.setXRange(*self.x_range_2)
+
+    def update_playback_speed_1(self, value):
+      self.x_range_speed_1 = value / 100.0
+    
+    def update_playback_speed_2(self, value):
+      self.x_range_speed_2 = value / 100.0
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
