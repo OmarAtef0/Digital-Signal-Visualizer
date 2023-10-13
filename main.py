@@ -1,21 +1,20 @@
 import sys
 import csv
-import numpy as np
 import pdf
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider , QColorDialog
-from PyQt5.QtCore import QTimer ,Qt
-from PyQt5.QtGui import QColor, QIcon ,QCursor
-from pyqtgraph import PlotWidget
-from pyqtgraph.graphicsItems import TextItem
+from PyQt5.QtCore import QTimer 
+from PyQt5.QtGui import QColor, QIcon
+import pyqtgraph as pg
 from task1 import Ui_MainWindow
 
 class SignalViewerApp(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        # Set up the UI
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)  # Set up the UI
+        self.ui.setupUi(self)  
 
         #pdf
         self.ui.pdfButton.clicked.connect(self.pdf)
@@ -52,8 +51,6 @@ class SignalViewerApp(QMainWindow):
         self.ui.SpeedSlider_2.valueChanged.connect(self.update_playback_speed_2)
 
         #color
-        # self.ui.SelectColor_1.clicked.connect(self.showColorSelector)
-        # self.ui.SelectColor_2.clicked.connect(self.showColorSelector)
         self.ui.SelectColor_1.clicked.connect(lambda: self.showColorSelector(for_plot_1=True))
         self.ui.SelectColor_2.clicked.connect(lambda: self.showColorSelector(for_plot_1=False))
 
@@ -118,7 +115,7 @@ class SignalViewerApp(QMainWindow):
         self.ui.PlayPauseButton_3.setDisabled(True)
         self.ui.SpeedSlider_3.setDisabled(True)
         self.ui.ZoomSlider_3.setDisabled(True)
-    
+        
     #Linking
     def toggle_link_plots(self):
         if not self.linked:
@@ -237,14 +234,17 @@ class SignalViewerApp(QMainWindow):
             selected_channel = self.ui.channelsMenu_2.currentText()
             new_channel_name = self.ui.editLabel_2.text()
         
-        # Update the channel name in the dictionary
-        self.rename_channel(selected_channel, new_channel_name)
-        
-        # Update the channel name in the QComboBox
-        if self.sender() == self.ui.SaveButton_1:
-            self.ui.channelsMenu_1.setItemText(self.ui.channelsMenu_1.currentIndex(), new_channel_name)
+        if new_channel_name in self.channel_data.keys():
+                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
         else:
-            self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
+            # Update the channel name in the dictionary
+            self.rename_channel(selected_channel, new_channel_name)
+            
+            # Update the channel name in the QComboBox
+            if self.sender() == self.ui.SaveButton_1:
+                self.ui.channelsMenu_1.setItemText(self.ui.channelsMenu_1.currentIndex(), new_channel_name)
+            else:
+                self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
 
         # remove text in editlabel
         self.ui.editLabel_1.clear()
@@ -349,6 +349,10 @@ class SignalViewerApp(QMainWindow):
                 time = []
                 amplitude = []
 
+                # Set labels
+                graph_frame.setLabel('bottom', text='Time')
+                graph_frame.setLabel('left', text='Amplitude')
+
                 for row in csv_reader:
                     time.append(float(row[0]))
                     amplitude.append(float(row[1]))
@@ -362,13 +366,9 @@ class SignalViewerApp(QMainWindow):
                     self.is_first_plot_2 = False
 
                 # Create a PlotDataItem to display the data
-                color_index = len(curves_list) % len(self.default_colors)  # Get a color index
+                color_index = len(curves_list) % len(self.default_colors)  
                 color = self.default_colors[color_index]
                 curve = graph_frame.plot(time, amplitude, pen=color)
-
-                # Set labels
-                graph_frame.setLabel('bottom', text='Time')
-                graph_frame.setLabel('left', text='Amplitude')
 
                 # Append the curve to the specified list
                 curves_list.append(curve)
@@ -378,31 +378,33 @@ class SignalViewerApp(QMainWindow):
                 channel_name = f"Channel {self.channel_counter}"
 
                 graph_number = 0
+                # Start the respective timer to move the x-axis
                 if graph_frame == self.plot_widget_1:
+                    print("gooo")
+                    self.timer_1.start(100)
+                    self.ui.PlayPauseButton_1.setText("Pause")
+                    self.playing_port_1 = True
                     graph_number = 1
                 elif graph_frame == self.plot_widget_2:
+                    self.timer_2.start(100)
+                    self.ui.PlayPauseButton_2.setText("Pause")
+                    self.playing_port_2 = True
                     graph_number = 2
-
+    
                 # Create a dictionary to store channel data
-                channel_data = {
+                signal_data = {
                     'time': time,
                     'amplitude': amplitude,
                     'color': color,  # More data will be added here
-                    'graph_number': graph_number
+                    'graph_number': graph_number,
+                    'visible': True
                 }
-                
 
                 # Update the channel data dictionary
-                self.channel_data[channel_name] = channel_data
+                self.channel_data[channel_name] = signal_data
 
                 # Add the channel name to the combo box
-                combo_box.addItem(channel_name)  # Update the combo box
-
-                # Start the respective timer to move the x-axis
-                if graph_frame == self.plot_widget_1:
-                    self.timer_1.start(50)
-                elif graph_frame == self.plot_widget_2:
-                    self.timer_2.start(50)
+                combo_box.addItem(channel_name)  
 
         except Exception as e:
             print("Error:", str(e))
@@ -505,21 +507,38 @@ class SignalViewerApp(QMainWindow):
     def update_playback_speed_2(self, value):
       self.x_range_speed_2 = (value / 100.0) +0.01
 
-    def toggle_visibility_1(self, state):
-        selected_channel_index = self.ui.channelsMenu_1.currentIndex()  # Get the selected channel index
+    def toggle_visibility_1(self):
         selected_channel = self.ui.channelsMenu_1.currentText()
-        print("selected channel = ",selected_channel)
-        print("selected channel index = ",selected_channel_index)
-        
-        if selected_channel_index >= 0:
-            if state == Qt.Checked:
-                self.curves_1[selected_channel_index].setVisible(True)  # Show the selected channel
-            else:
-                self.curves_1[selected_channel_index].setVisible(False)  # Hide the selected channel
+        self.plot_widget_1.clear()
+
+        if self.ui.ShowHide_1.isChecked():
+            self.channel_data[selected_channel]['visible'] = True
+        else:
+            self.channel_data[selected_channel]['visible'] = False
 
         # Force a redraw of the plot to reflect the changes
-        self.plot_widget_1.replot()
+        for signal_name , signal in self.channel_data.items():
+            print("signal name : ",signal_name,"  ", signal['visible'])
+            if signal['visible'] == True:
+                curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'])
+                self.curves_1.append(curve)
+    
+    def toggle_visibility_2(self):
+        selected_channel = self.ui.channelsMenu_2.currentText()
+        self.plot_widget_2.clear()
 
+        if self.ui.ShowHide_2.isChecked():
+            self.channel_data[selected_channel]['visible'] = True
+        else:
+            self.channel_data[selected_channel]['visible'] = False
+
+        # Force a redraw of the plot to reflect the changes
+        for signal_name , signal in self.channel_data.items():
+            print("signal name : ",signal_name,"  ", signal['visible'])
+            if signal['visible'] == True:
+                curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'])
+                self.curves_2.append(curve)
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = SignalViewerApp()
