@@ -5,11 +5,10 @@ import pdf
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider , QColorDialog
 from PyQt5.QtCore import QTimer ,Qt
-from PyQt5.QtGui import QColor, QIcon , QPen
+from PyQt5.QtGui import QColor, QIcon ,QCursor
 from pyqtgraph import PlotWidget
 from pyqtgraph.graphicsItems import TextItem
 from task1 import Ui_MainWindow
-
 
 class SignalViewerApp(QMainWindow):
 
@@ -28,6 +27,7 @@ class SignalViewerApp(QMainWindow):
         #play/pause
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
         self.ui.PlayPauseButton_2.clicked.connect(self.toggle_playback_2)
+        self.ui.PlayPauseButton_3.clicked.connect(self.toggle_playback_3)
 
         # Reset
         self.ui.ResetButton_1.clicked.connect(self.reset_plot)
@@ -40,8 +40,6 @@ class SignalViewerApp(QMainWindow):
         self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
         self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
 
-        #show/hide
-        self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
         
         #zoom
         self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
@@ -54,8 +52,8 @@ class SignalViewerApp(QMainWindow):
         #color
         # self.ui.SelectColor_1.clicked.connect(self.showColorSelector)
         # self.ui.SelectColor_2.clicked.connect(self.showColorSelector)
-        self.ui.SelectColor_1.clicked.connect(lambda: self.showColorSelector(for_plot_1=True))
-        self.ui.SelectColor_2.clicked.connect(lambda: self.showColorSelector(for_plot_1=False))
+        self.ui.SelectColor_1.clicked.connect(lambda: self.show_color_selector(for_plot_1=True))
+        self.ui.SelectColor_2.clicked.connect(lambda: self.show_color_selector(for_plot_1=False))
 
         #label
         self.ui.SaveButton_1.clicked.connect(self.save_channel_name)
@@ -68,8 +66,7 @@ class SignalViewerApp(QMainWindow):
         #channels
         self.ui.channelsMenu_1.currentIndexChanged.connect(self.select_channel_1)
         self.ui.channelsMenu_2.currentIndexChanged.connect(self.select_channel_2)
-
-
+        
         self.x_range_speed_1 = 0.05  # Should be done by a slider or button
         self.x_range_speed_2 = 0.05  # Should be done by a slider or button
         self.x_range_1 = [0.0, 10.0]  # Initial x-axis range for plot_widget_1
@@ -105,98 +102,112 @@ class SignalViewerApp(QMainWindow):
         self.playing_port_2 = False
         self.zoom_level_1 = 5.0
         self.zoom_level_2 = 5.0
-        
-        self.ui.PlayPauseButton_3.clicked.connect(self.toggle_playback_3)
-
-
         #Delete Button 
         self.ui.deleteButton_1.clicked.connect(self.delete_channel_1)
         self.ui.deleteButton_2.clicked.connect(self.delete_channel_2)
 
-       # Linking Plots 
+        #Linking Plots 
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
-        self.ui.SpeedSlider_3.valueChanged.connect(self.update_both_plots)
-        self.ui.ZoomSlider_3.valueChanged.connect(self.update_both_plots)
-        
+        self.ui.SpeedSlider_3.valueChanged.connect(self.update_both_plots_speed)
+        self.ui.ZoomSlider_3.valueChanged.connect(self.update_both_plots_zoom)
         self.ui.PlayPauseButton_3.setDisabled(True)
         self.ui.SpeedSlider_3.setDisabled(True)
         self.ui.ZoomSlider_3.setDisabled(True)
-      
-        
-
-    # #detect change in selected channel
-    # def onChannelChange1(self):
-    #     selected_text = self.ui.channelsMenu_1.currentText()
-    #     selectedSignalIndex = selected_text[-1]
-    #     print(f"selectedSignalIndex: {selectedSignalIndex}")
     
-    # def onChannelChange2(self):
-    #     selected_text = self.ui.channelsMenu_2.currentText()
-    #     selectedSignalIndex = int(selected_text[-1]) + 5
-    #     print(f"selectedSignalIndex: {selectedSignalIndex}")
-        # Initialize the playing state
-
-
     #Linking
-
     def toggle_link_plots(self):
         if not self.linked:
-            # Calculate minimum x-axis range
-            min_x_range = min(self.x_range_1, self.x_range_2)
-            
-            # Calculate minimum zoom level
-            min_zoom_level = min(self.zoom_level_1, self.zoom_level_2)
-            
-            # Calculate minimum speed
-            min_x_range_speed = min(self.x_range_speed_1, self.x_range_speed_2)
-            
-            # Update both plots with the minimum values
-            self.x_range_1 = min_x_range
-            self.x_range_2 = min_x_range
-            self.zoom_level_1 = min_zoom_level
-            self.zoom_level_2 = min_zoom_level
-            self.x_range_speed_1 = min_x_range_speed
-            self.x_range_speed_2 = min_x_range_speed
-            
-            # Set the linked state
-            self.linked = True
-            
-            # Enable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
-            self.ui.PlayPauseButton_3.setEnabled(True)
-            self.ui.SpeedSlider_3.setEnabled(True)
-            self.ui.ZoomSlider_3.setEnabled(True)
+          self.playing_port_1 = True
+          self.playing_port_2 = True
+          # Calculate minimum x-axis range
+          min_x_range = min(self.x_range_1, self.x_range_2)
+          
+          # Calculate minimum zoom level
+          min_zoom_level = min(self.zoom_level_1, self.zoom_level_2)
+          
+          # Calculate minimum speed
+          min_x_range_speed = min(self.x_range_speed_1, self.x_range_speed_2)
+          
+          # Update both plots with the minimum values
+          self.x_range_1 = min_x_range 
+          self.x_range_2 = min_x_range 
+          self.zoom_level_2 = min_zoom_level
+          self.zoom_level_1 = min_zoom_level
+          self.x_range_speed_1 = min_x_range_speed
+          self.x_range_speed_2 = min_x_range_speed
+          
+          # Set the linked state
+          self.linked = True
+          self.ui.linkButton.setText("Unlink")
+          # Enable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
+          self.ui.PlayPauseButton_3.setText("Pause")
+          self.ui.PlayPauseButton_3.setEnabled(True)
+          self.ui.SpeedSlider_3.setEnabled(True)
+          self.ui.ZoomSlider_3.setEnabled(True)
 
         else:
             # Toggle the linked state back to unlinked
             self.linked = False
-
+            self.ui.linkButton.setText("Link")
             # Disable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
             self.ui.PlayPauseButton_3.setDisabled(True)
             self.ui.SpeedSlider_3.setDisabled(True)
             self.ui.ZoomSlider_3.setDisabled(True)
+            self.ui.PlayPauseButton_3.setText("Play")
+            # self.update_playback_button(self, self.playing_port_1, self.ui.PlayPauseButton_1)
+            # self.update_playback_button(self, self.playing_port_2, self.ui.PlayPauseButton_2)
 
         # Enable or disable ControlPanel_1 and ControlPanel_2 as needed
         self.ui.ControlPanel_1.setDisabled(self.linked)
         self.ui.ControlPanel_2.setDisabled(self.linked)
+        self.ui.PlayPauseButton_1.setDisabled(self.linked)
+        self.ui.PlayPauseButton_2.setDisabled(self.linked)
 
+        btn_active = """
+        QPushButton {
+            background-color: rgb(0, 85, 255);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+        }
+        
+        QPushButton:hover {
+            background-color: rgb(0, 50, 150);
+        }"""
 
+        btn_inactive = """
+        QPushButton {
+            background-color: rgba(0, 85, 255,0.7);
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+        }
+        """
 
-    def update_both_plots(self, value):
-        # Update the zoom level and speed for both plots
-        self.zoom_level_1 = value / 100.0
-        self.zoom_level_2 = value / 100.0
+        if self.linked:
+            self.ui.PlayPauseButton_1.setStyleSheet(btn_inactive)
+            self.ui.PlayPauseButton_2.setStyleSheet(btn_inactive)
+            self.ui.PlayPauseButton_3.setStyleSheet(btn_active)
+        else:
+            self.ui.PlayPauseButton_1.setStyleSheet(btn_active)
+            self.ui.PlayPauseButton_2.setStyleSheet(btn_active)
+            self.ui.PlayPauseButton_3.setStyleSheet(btn_inactive)
+
+    def update_both_plots_speed(self, value):
+        # Update speed for both plots
         self.x_range_speed_1 = value / 100.0
         self.x_range_speed_2 = value / 100.0
 
-
-
-
-
-
+    def update_both_plots_zoom(self, value):
+        # Update zoom level for both plots
+        self.zoom_level_1 = value / 4
+        self.zoom_level_2 = value / 4
+        self.x_range_1 = [0, 10 * self.zoom_level_1]
+        self.x_range_2 = [0, 10 * self.zoom_level_2]
+        self.plot_widget_1.setXRange(*self.x_range_1) 
+        self.plot_widget_2.setXRange(*self.x_range_2)
 
     # Color
-    def showColorSelector(self, for_plot_1=True):
+    def show_color_selector(self, for_plot_1=True):
         # Get the selected channel from the combo box
         selected_channel = self.ui.channelsMenu_1.currentText() if for_plot_1 else self.ui.channelsMenu_2.currentText()
         
@@ -216,21 +227,28 @@ class SignalViewerApp(QMainWindow):
             else:
                 QtWidgets.QMessageBox.warning(self, 'Warning', 'Color is invalid!')
 
-
     # Reset
     def reset_plot(self, graph_frame):
         # Reset the x-axis range for the specified plot
         if graph_frame == self.plot_widget_1:
             self.x_range_1 = [0.0, 10.0]
             self.plot_widget_1.setXRange(*self.x_range_1)
+            self.ui.SpeedSlider_1.setValue(4)
+            self.ui.ZoomSlider_1.setValue(4)
         elif graph_frame == self.plot_widget_2:
             self.x_range_2 = [0.0, 10.0]
             self.plot_widget_2.setXRange(*self.x_range_2)
+            self.ui.SpeedSlider_2.setValue(4)
+            self.ui.ZoomSlider_2.setValue(4)
 
     # Label
     def save_channel_name(self):
-        selected_channel = self.ui.channelsMenu_1.currentText() if self.sender() == self.ui.SaveButton_1 else self.ui.channelsMenu_2.currentText()
-        new_channel_name = self.ui.editLabel_1.text() if self.sender() == self.ui.SaveButton_1 else self.ui.editLabel_2.text()
+        if self.sender() == self.ui.SaveButton_1:
+            selected_channel = self.ui.channelsMenu_1.currentText()
+            new_channel_name = self.ui.editLabel_1.text()
+        else:
+            selected_channel = self.ui.channelsMenu_2.currentText()
+            new_channel_name = self.ui.editLabel_2.text()
         
         # Update the channel name in the dictionary
         self.rename_channel(selected_channel, new_channel_name)
@@ -241,21 +259,28 @@ class SignalViewerApp(QMainWindow):
         else:
             self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
 
+        # remove text in editlabel
+        self.ui.editLabel_1.clear()
+        self.ui.editLabel_2.clear()
+
     def rename_channel(self, channel_name, new_name):
         if channel_name and new_name:
-            # Update the channel name in the combo box
-            index_1 = self.ui.channelsMenu_1.findText(channel_name)
-            if index_1 >= 0:
-                self.ui.channelsMenu_1.setItemText(index_1, new_name)
-            index_2 = self.ui.channelsMenu_2.findText(channel_name)
-            if index_2 >= 0:
-                self.ui.channelsMenu_2.setItemText(index_2, new_name)
+            if new_name in self.channel_data.keys():
+                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
+            else:
+                # Update the channel name in the combo box
+                index_1 = self.ui.channelsMenu_1.findText(channel_name)
+                if index_1 >= 0:
+                    self.ui.channelsMenu_1.setItemText(index_1, new_name)
+                index_2 = self.ui.channelsMenu_2.findText(channel_name)
+                if index_2 >= 0:
+                    self.ui.channelsMenu_2.setItemText(index_2, new_name)
 
-            # Update the channel name in the data
-            if channel_name in self.channel_data:
-                channel_data = self.channel_data[channel_name]
-                self.channel_data[new_name] = channel_data
-                del self.channel_data[channel_name]
+                # Update the channel name in the data
+                if channel_name in self.channel_data:
+                    channel_data = self.channel_data[channel_name]
+                    self.channel_data[new_name] = channel_data
+                    del self.channel_data[channel_name]
 
     #Delete
     def delete_channel(self, graph_frame, combo_box, curves_list):
@@ -276,7 +301,6 @@ class SignalViewerApp(QMainWindow):
     def delete_channel_2(self):
         self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
 
-    #export pdf
     def pdf(self):
       pdf.Exporter(self)
 
@@ -300,31 +324,28 @@ class SignalViewerApp(QMainWindow):
       self.plot_widget_2.setXRange(*self.x_range_2)
 
     def switch_channel(self, graph_frame, combo_box, curves_list):
-            selected_channel = combo_box.currentText()
-            if selected_channel:
-                channel_data = self.get_channel_data(selected_channel)
+        selected_channel = combo_box.currentText()
+        if selected_channel:
+            channel_data = self.get_channel_data(selected_channel)
 
-                graph_frame.clear()
-                curve = graph_frame.plot(channel_data['time'], channel_data['amplitude'], pen=channel_data['color'])
-                graph_frame.setLabel('bottom', text='Time')
-                graph_frame.setLabel('left', text='Amplitude')
-                curves_list.clear()
-                curves_list.append(curve)
+            graph_frame.clear()
+            curve = graph_frame.plot(channel_data['time'], channel_data['amplitude'], pen=channel_data['color'])
+            graph_frame.setLabel('bottom', text='Time')
+            graph_frame.setLabel('left', text='Amplitude')
+            curves_list.clear()
+            curves_list.append(curve)
 
-       
     def select_channel_1(self, index):
         self.switch_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
 
     def select_channel_2(self, index):
         self.switch_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
 
-
     def get_channel_data(self, channel_name):
         if channel_name in self.channel_data:
             return self.channel_data[channel_name]
         else:
             return None  # Return None if the channel is not found
-
 
     def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box, ):
         try:
@@ -369,13 +390,20 @@ class SignalViewerApp(QMainWindow):
                 self.channel_counter += 1
                 channel_name = f"Channel {self.channel_counter}"
 
+                graph_number = 0
+                if graph_frame == self.plot_widget_1:
+                    graph_number = 1
+                elif graph_frame == self.plot_widget_2:
+                    graph_number = 2
 
                 # Create a dictionary to store channel data
                 channel_data = {
                     'time': time,
                     'amplitude': amplitude,
-                    'color': color  # More data will be added here
+                    'color': color,  # More data will be added here
+                    'graph_number': graph_number
                 }
+                
 
                 # Update the channel data dictionary
                 self.channel_data[channel_name] = channel_data
@@ -391,7 +419,6 @@ class SignalViewerApp(QMainWindow):
 
         except Exception as e:
             print("Error:", str(e))
-
 
     def browse_file(self, graph_frame, curves_list, combo_box):
         options = QFileDialog.Options()
@@ -409,32 +436,25 @@ class SignalViewerApp(QMainWindow):
                 self.toggle_playback_1() if graph_frame == self.plot_widget_1 else self.toggle_playback_2()
             self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
 
-
-
     def browse_file_1(self):
         self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1)
 
     def browse_file_2(self):
         self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2)
 
-    
-   
-    # Calculate the new x-axis range based on the scrollbar's value
     def scroll_graph_1_x(self, value):
-    # Calculate the new x-axis range based on the scrollbar's value
+      # Calculate the new x-axis range based on the scrollbar's value
       scroll_window = self.x_range_1[1] - self.x_range_1[0]
       new_x_min = value / 100.0 * (scroll_window)
       new_x_max = new_x_min + scroll_window
-
       # Ensure the new_x_min doesn't go below zero
       if new_x_min < 0:
-          new_x_min = 0
-          new_x_max = scroll_window
+        new_x_min = 0  
+        new_x_max = scroll_window
 
       # Set the updated x-axis range for the first plot
       self.x_range_1 = [new_x_min, new_x_max]
       self.plot_widget_1.setXRange(*self.x_range_1)
-
 
     def scroll_graph_2_x(self, value):
     # Calculate the new x-axis range based on the scrollbar's value
@@ -444,14 +464,13 @@ class SignalViewerApp(QMainWindow):
 
       # Ensure the new_x_min doesn't go below zero
       if new_x_min < 0:
-          new_x_min = 0
-          new_x_max = scroll_window
+        new_x_min = 0
+        new_x_max = scroll_window
 
       # Set the updated x-axis range for the first plot
       self.x_range_2 = [new_x_min, new_x_max]
       self.plot_widget_2.setXRange(*self.x_range_2)
 
-        
     def scroll_graph_1_y(self, value):
     # Calculate the new y-axis range based on the vertical scrollbar's value
       new_y_min = value / 100.0 * 10.0  # Assuming a range of 0-10
@@ -460,70 +479,44 @@ class SignalViewerApp(QMainWindow):
       # Set the updated y-axis range for the first plot
       self.y_range_1 = [new_y_min, new_y_max]
       self.plot_widget_1.setYRange(*self.y_range_1)
-    
 
     def toggle_playback_1(self):
-        # Update the text of the "Pause/Resume" button
-        if self.playing_port_1:
-            self.ui.PlayPauseButton_1.setText("Play")
-        else:
-            self.ui.PlayPauseButton_1.setText("Pause")
-        
-        self.playing_port_1 = not self.playing_port_1
+      # Update the text of the "Pause/Resume" button
+      self.playing_port_1 = not self.playing_port_1
+      self.update_playback_button(self.playing_port_1, self.ui.PlayPauseButton_1)
 
     def toggle_playback_2(self):
-        if self.playing_port_2:
-            self.ui.PlayPauseButton_2.setText("Play")
-        else:
-            self.ui.PlayPauseButton_2.setText("Pause")
-        self.playing_port_2 = not self.playing_port_2
+      self.playing_port_2 = not self.playing_port_2
+      self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_2)
 
     def toggle_playback_3(self):
-        self.playing_port_1 = not self.playing_port_1
-        self.playing_port_2 = not self.playing_port_2
-        self.update_playback_button(self.playing_port_1, self.ui.PlayPauseButton_1)
-        self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_2)
-        self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_3)
+      self.playing_port_1 = not self.playing_port_1
+      self.playing_port_2 = not self.playing_port_2
+      self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_3)
 
     def update_playback_button(self, playing, button):
-        if playing:
-            button.setText("Pause")
-        else:
-            button.setText("Play")
+      if playing:
+          button.setText("Pause")
+      else:
+          button.setText("Play")
 
     def update_zoom_1(self, value):
-      self.zoom_level_1 = value / 100.0
+      self.zoom_level_1 = value / 4
       # Update the x-axis range of the plots
       self.x_range_1 = [0, 10 * self.zoom_level_1]
       self.plot_widget_1.setXRange(*self.x_range_1) #Current POS
 
     def update_zoom_2(self, value):
-      self.zoom_level_2 = value / 100.0
+      self.zoom_level_2 = value / 4
       # Update the x-axis range of the plots
       self.x_range_2 = [0, 10 * self.zoom_level_2]
       self.plot_widget_2.setXRange(*self.x_range_2)
 
     def update_playback_speed_1(self, value):
-      self.x_range_speed_1 = (value / 100.0) +0.01
+      self.x_range_speed_1 = (value / 100.0) + 0.01
     
     def update_playback_speed_2(self, value):
-      self.x_range_speed_2 = (value / 100.0) +0.01
-
-    def toggle_visibility_1(self, state):
-        pass
-# Not Working yet
-    # def toggle_visibility_1(self, state):
-    #     selected_channel_index = self.ui.channelsMenu_1.currentIndex()  # Get the selected channel index
-    #     selected_channel = self.ui.channelsMenu_1.currentText()
-        
-    #     if selected_channel_index >= 0:
-    #         if state == Qt.Checked:
-    #             self.curves_1[selected_channel_index].setVisible(True)  # Show the selected channel
-    #         else:
-    #             self.curves_1[selected_channel_index].setVisible(False)  # Hide the selected channel
-
-    #     # Force a redraw of the plot to reflect the changes
-    #     self.plot_widget_1.replot()
+      self.x_range_speed_2 = (value / 100.0) + 0.01
 
 
 if __name__ == "__main__":
@@ -531,5 +524,6 @@ if __name__ == "__main__":
     window = SignalViewerApp()
     window.setWindowTitle("Digital Signal Viewer")
     app.setWindowIcon(QIcon("img/logo.png"))
+    window.resize(1100,850)
     window.show()
     sys.exit(app.exec_())
