@@ -16,7 +16,6 @@ def Exporter(self):
     if not self.curves_1 and not self.curves_2:
         # This message appears if there is no signal to EXPORT
         QtWidgets.QMessageBox.warning(self, 'Warning', 'You have to plot a signal first')
-
     else:
         FolderPath = QFileDialog.getSaveFileName(None, str('Save the signal file'), None, str("PDF FIles(*.pdf)"))
         if FolderPath != '':
