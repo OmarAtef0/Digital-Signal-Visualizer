@@ -1977,6 +1977,8 @@ QPushButton:hover {
                  </widget>
                 </item>
                </layout>
+               <zorder>deleteButton_2</zorder>
+               <zorder>BrowseButton_2</zorder>
               </widget>
              </item>
              <item>

@@ -283,10 +283,16 @@ class SignalViewerApp(QMainWindow):
             combo_box.removeItem(combo_box.currentIndex())
 
     def delete_channel_1(self):
-        self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
+        if self.curves_1:
+            self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
+            if not self.curves_1:
+                self.toggle_playback_1()
 
     def delete_channel_2(self):
-        self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
+        if self.curves_2:
+            self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
+            if not self.curves_2:
+                self.toggle_playback_2()
 
     def pdf(self):
       pdf.Exporter(self)
@@ -316,9 +322,13 @@ class SignalViewerApp(QMainWindow):
             channel_data = self.get_channel_data(selected_channel)
 
             graph_frame.clear()
-            curve = graph_frame.plot(channel_data['time'], channel_data['amplitude'], pen=channel_data['color'])
             graph_frame.setLabel('bottom', text='Time')
             graph_frame.setLabel('left', text='Amplitude')
+
+            curve = graph_frame.plot(channel_data['time'], channel_data['amplitude'], name = selected_channel,  pen=channel_data['color'])
+            graph_frame.showGrid(x=True, y=True)
+            graph_frame.addLegend()
+
             curves_list.clear()
             curves_list.append(curve)
        
@@ -365,22 +375,23 @@ class SignalViewerApp(QMainWindow):
                     graph_frame.clear()
                     self.is_first_plot_2 = False
 
-                # Create a PlotDataItem to display the data
-                color_index = len(curves_list) % len(self.default_colors)  
-                color = self.default_colors[color_index]
-                curve = graph_frame.plot(time, amplitude, pen=color)
-
-                # Append the curve to the specified list
-                curves_list.append(curve)
-
                 # Add the channel name to the list
                 self.channel_counter += 1
                 channel_name = f"Channel {self.channel_counter}"
 
+                # Create a PlotDataItem to display the data
+                color_index = len(curves_list) % len(self.default_colors)  
+                color = self.default_colors[color_index]
+                curve = graph_frame.plot(time, amplitude, name = channel_name,  pen = color)
+                graph_frame.showGrid(x=True, y=True)
+                graph_frame.addLegend()
+
+                # Append the curve to the specified list
+                curves_list.append(curve)
+
                 graph_number = 0
                 # Start the respective timer to move the x-axis
                 if graph_frame == self.plot_widget_1:
-                    print("gooo")
                     self.timer_1.start(100)
                     self.ui.PlayPauseButton_1.setText("Pause")
                     self.playing_port_1 = True
@@ -461,7 +472,6 @@ class SignalViewerApp(QMainWindow):
       self.plot_widget_1.setYRange(*self.y_range_1)
     
     def toggle_playback_1(self):
-        # Update the text of the "Pause/Resume" button
         if self.playing_port_1:
             self.ui.PlayPauseButton_1.setText("Play")
         else:
@@ -469,12 +479,20 @@ class SignalViewerApp(QMainWindow):
         
         self.playing_port_1 = not self.playing_port_1
 
+        if not self.curves_1:
+            self.playing_port_1 = False
+            self.ui.PlayPauseButton_1.setText("Play")
+
     def toggle_playback_2(self):
         if self.playing_port_2:
             self.ui.PlayPauseButton_2.setText("Play")
         else:
             self.ui.PlayPauseButton_2.setText("Pause")
         self.playing_port_2 = not self.playing_port_2
+
+        if not self.curves_2:
+            self.playing_port_2 = False
+            self.ui.PlayPauseButton_2.setText("Play")
 
     def toggle_playback_3(self):
         self.playing_port_1 = not self.playing_port_1
