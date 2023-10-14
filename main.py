@@ -273,13 +273,9 @@ class SignalViewerApp(QMainWindow):
     def delete_channel(self, graph_frame, combo_box, curves_list):
         selected_channel = combo_box.currentText()
         if selected_channel:
-            # Remove the curve from the plot
             graph_frame.removeItem(curves_list[-1])
-            # Remove the curve from the list
             curves_list.pop()
-            # Remove the channel from the dictionary
             self.channel_data.pop(selected_channel)
-            # Remove the channel from the combo box
             combo_box.removeItem(combo_box.currentIndex())
 
     def delete_channel_1(self):
@@ -478,7 +474,6 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_1.setText("Pause")
         
         self.playing_port_1 = not self.playing_port_1
-
         if not self.curves_1:
             self.playing_port_1 = False
             self.ui.PlayPauseButton_1.setText("Play")
@@ -488,8 +483,8 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_2.setText("Play")
         else:
             self.ui.PlayPauseButton_2.setText("Pause")
-        self.playing_port_2 = not self.playing_port_2
 
+        self.playing_port_2 = not self.playing_port_2
         if not self.curves_2:
             self.playing_port_2 = False
             self.ui.PlayPauseButton_2.setText("Play")
