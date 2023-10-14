@@ -63,12 +63,6 @@ class SignalViewerApp(QMainWindow):
         #plot
         self.plot_widget_1 = self.ui.graph1
         self.plot_widget_2 = self.ui.graph2
-        
-        #Icon
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        icon_path = os.path.join(script_dir, "logo.png")
-        app_icon = QIcon(icon_path)
-        self.setWindowIcon(app_icon)
 
         #channels
         self.ui.channelsMenu_1.currentIndexChanged.connect(self.select_channel_1)
@@ -329,13 +323,9 @@ class SignalViewerApp(QMainWindow):
     def delete_channel(self, graph_frame, combo_box, curves_list):
         selected_channel = combo_box.currentText()
         if selected_channel:
-            # Remove the curve from the plot
             graph_frame.removeItem(curves_list[-1])
-            # Remove the curve from the list
             curves_list.pop()
-            # Remove the channel from the dictionary
             self.channel_data.pop(selected_channel)
-            # Remove the channel from the combo box
             combo_box.removeItem(combo_box.currentIndex())
 
     def delete_channel_1(self):
@@ -543,21 +533,26 @@ class SignalViewerApp(QMainWindow):
         self.plot_widget_1.setYRange(new_y_min, new_y_max)
 
     def toggle_playback_1(self):
-      # Update the text of the "Pause/Resume" button
-      self.playing_port_1 = not self.playing_port_1
-      self.update_playback_button(self.playing_port_1, self.ui.PlayPauseButton_1)
-
-      if not self.curves_1:
-        self.playing_port_1 = False
-        self.ui.PlayPauseButton_1.setText("Play")
+        if self.playing_port_1:
+            self.ui.PlayPauseButton_1.setText("Play")
+        else:
+            self.ui.PlayPauseButton_1.setText("Pause")
+        
+        self.playing_port_1 = not self.playing_port_1
+        if not self.curves_1:
+            self.playing_port_1 = False
+            self.ui.PlayPauseButton_1.setText("Play")
 
     def toggle_playback_2(self):
-      self.playing_port_2 = not self.playing_port_2
-      self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_2)
-      
-      if not self.curves_2:
-        self.playing_port_2 = False
-        self.ui.PlayPauseButton_2.setText("Play")
+        if self.playing_port_2:
+            self.ui.PlayPauseButton_2.setText("Play")
+        else:
+            self.ui.PlayPauseButton_2.setText("Pause")
+
+        self.playing_port_2 = not self.playing_port_2
+        if not self.curves_2:
+            self.playing_port_2 = False
+            self.ui.PlayPauseButton_2.setText("Play")
 
     def toggle_playback_3(self):
       self.playing_port_1 = not self.playing_port_1
