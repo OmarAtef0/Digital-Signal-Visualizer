@@ -140,6 +140,21 @@
              <number>0</number>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QLabel" name="appTitle">
                <property name="sizePolicy">
@@ -164,7 +179,6 @@
                 <font>
                  <family>Arial</family>
                  <pointsize>18</pointsize>
-                 <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
@@ -310,36 +324,6 @@
                    <property name="spacing">
                     <number>5</number>
                    </property>
-                   <item row="0" column="1">
-                    <widget class="PlotWidget" name="graph1" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>356</width>
-                       <height>274</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>false</bool>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(0, 0, 0);
-margin: 3px;
-</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="1">
                     <widget class="QScrollBar" name="HorizontalScrollBar_1">
                      <property name="sizePolicy">
@@ -372,6 +356,36 @@ QScrollBar::handle:horizontal {
                      </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="PlotWidget" name="graph1" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>356</width>
+                       <height>274</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="autoFillBackground">
+                      <bool>false</bool>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(0, 0, 0);
+margin: 3px;
+</string>
                      </property>
                     </widget>
                    </item>
@@ -614,6 +628,12 @@ margin: 3px;
        </item>
        <item>
         <widget class="QFrame" name="lower">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -669,6 +689,12 @@ margin: 3px;
              <number>1</number>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
              <property name="bottomMargin">
               <number>9</number>
              </property>
@@ -857,6 +883,11 @@ margin: 3px;
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
+                  <item>
+                   <property name="text">
+                    <string>All Channels</string>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
@@ -1045,6 +1076,13 @@ margin: 3px;
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="Moveto2">
+               <property name="text">
+                <string>Move to Graph2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_5">
                <property name="maximumSize">
                 <size>
@@ -1106,7 +1144,7 @@ margin: 3px;
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_18">
+              <widget class="QFrame" name="frame_22">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -1122,7 +1160,7 @@ margin: 3px;
                <property name="lineWidth">
                 <number>0</number>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_12">
+               <layout class="QVBoxLayout" name="verticalLayout_13">
                 <property name="spacing">
                  <number>5</number>
                 </property>
@@ -1160,7 +1198,6 @@ margin: 3px;
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1431,6 +1468,9 @@ QPushButton:hover {
              <number>1</number>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_14">
+             <property name="topMargin">
+              <number>2</number>
+             </property>
              <item alignment="Qt::AlignHCenter">
               <widget class="QFrame" name="frame_14">
                <property name="minimumSize">
@@ -1492,7 +1532,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1537,7 +1576,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1766,7 +1804,7 @@ QPushButton:hover {
                </property>
               </widget>
              </item>
-             <item alignment="Qt::AlignHCenter">
+             <item>
               <widget class="QFrame" name="frame_19">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1833,7 +1871,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>
@@ -1892,6 +1929,12 @@ QPushButton:hover {
              <number>1</number>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
              <item>
               <widget class="QFrame" name="frame_3">
                <property name="minimumSize">
@@ -2079,6 +2122,11 @@ QPushButton:hover {
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
+                  <item>
+                   <property name="text">
+                    <string>All Channels</string>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
@@ -2300,6 +2348,13 @@ QPushButton:hover {
                  <number>0</number>
                 </property>
                 <item>
+                 <widget class="QPushButton" name="Moveto1">
+                  <property name="text">
+                   <string>Move to Graph1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="Line" name="line_2">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -2382,7 +2437,6 @@ QPushButton:hover {
                   </property>
                   <property name="font">
                    <font>
-                    <weight>75</weight>
                     <bold>true</bold>
                    </font>
                   </property>

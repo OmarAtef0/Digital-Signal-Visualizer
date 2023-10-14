@@ -15,9 +15,7 @@ class SignalViewerApp(QMainWindow):
     def __init__(self):
         super().__init__()
         # Set up the UI
-        # Set up the UI
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)  
         self.ui.setupUi(self)  
 
         #pdf
@@ -31,13 +29,10 @@ class SignalViewerApp(QMainWindow):
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
         self.ui.PlayPauseButton_2.clicked.connect(self.toggle_playback_2)
         self.ui.PlayPauseButton_3.clicked.connect(self.toggle_playback_3)
-        self.ui.PlayPauseButton_3.clicked.connect(self.toggle_playback_3)
 
         # Reset
-        self.ui.ResetButton_1.clicked.connect(self.reset_plot)
-        self.ui.ResetButton_2.clicked.connect(self.reset_plot)
-        self.ui.ResetButton_1.clicked.connect(lambda: self.reset_plot(self.plot_widget_1))
-        self.ui.ResetButton_2.clicked.connect(lambda: self.reset_plot(self.plot_widget_2))
+        self.ui.ResetButton_1.clicked.connect(lambda: self.reset_plot(for_plot_1=True))
+        self.ui.ResetButton_2.clicked.connect(lambda: self.reset_plot(for_plot_1=False))
 
         # scroll
         self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
@@ -46,6 +41,7 @@ class SignalViewerApp(QMainWindow):
 
         #show/hide
         self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
+        self.ui.ShowHide_2.stateChanged.connect(self.toggle_visibility_2)
         
         #zoom
         self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
@@ -60,16 +56,16 @@ class SignalViewerApp(QMainWindow):
         self.ui.SelectColor_2.clicked.connect(lambda: self.showColorSelector(for_plot_1=False))
 
         #label
-        self.ui.SaveButton_1.clicked.connect(self.save_channel_name)
-        self.ui.SaveButton_2.clicked.connect(self.save_channel_name)
+        self.ui.SaveButton_1.clicked.connect(lambda: self.save_channel_name(for_plot_1=True))
+        self.ui.SaveButton_2.clicked.connect(lambda: self.save_channel_name(for_plot_1=False))
         
         #plot
         self.plot_widget_1 = self.ui.graph1
         self.plot_widget_2 = self.ui.graph2
 
         #channels
-        self.ui.channelsMenu_1.currentIndexChanged.connect(self.select_channel_1)
-        self.ui.channelsMenu_2.currentIndexChanged.connect(self.select_channel_2)
+        self.ui.channelsMenu_1.currentIndexChanged.connect(lambda: self.switch_channel(for_plot_1=True))
+        self.ui.channelsMenu_2.currentIndexChanged.connect(lambda: self.switch_channel(for_plot_1=False))
 
         self.x_range_speed_1 = 0.05  # Should be done by a slider or button
         self.x_range_speed_2 = 0.05  # Should be done by a slider or button
@@ -111,7 +107,6 @@ class SignalViewerApp(QMainWindow):
         self.ui.deleteButton_1.clicked.connect(self.delete_channel_1)
         self.ui.deleteButton_2.clicked.connect(self.delete_channel_2)
 
-        #Linking Plots 
         #Linking Plots 
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
@@ -155,19 +150,183 @@ class SignalViewerApp(QMainWindow):
         self.play_pause_2_action.triggered.connect(self.toggle_playback_2)
         self.addAction(self.play_pause_2_action)
 
-        self.selected_signals = []
+        #scroll bars
+        self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
+        self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
+        self.ui.VerticalScrollBar_2.valueChanged.connect(self.scroll_graph_2_y)
+        self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
+        self.ui.VerticalScrollBar_1.setRange(10,100)
+        self.ui.VerticalScrollBar_1.setValue(10)
+        self.ui.VerticalScrollBar_2.setRange(10,100)
+        self.ui.VerticalScrollBar_2.setValue(10)
+
+        #drag and drop el ghalaba
+        self.ui.Moveto1.clicked.connect(self.move_to1)
+        self.ui.Moveto2.clicked.connect(self.move_to2)
+
+    def move_to2(self):
+        selected_channel = self.ui.channelsMenu_1.currentText() 
+
+        if selected_channel == "All Channels":
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+        else:
+            self.channel_data[selected_channel]['graph_number'] = 2
+
+            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+            self.ui.channelsMenu_1.removeItem(index_1)
+            self.ui.channelsMenu_1.setCurrentIndex(0)
+            
+            self.ui.channelsMenu_2.addItem(selected_channel)
+            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+            self.ui.channelsMenu_2.setCurrentIndex(index_2)
+
+            self.timer_2.start(100)
+            self.ui.PlayPauseButton_2.setText("Pause")
+            self.playing_port_2 = True
+
+            if self.ui.channelsMenu_1.count() == 1:
+                self.playing_port_1 = False
+                self.ui.PlayPauseButton_1.setText("Play")
+
+            self.redraw1()
+            self.redraw2()
+
+    def move_to1(self):
+        selected_channel = self.ui.channelsMenu_2.currentText() 
+
+        if selected_channel == "All Channels":
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+        else:
+            self.channel_data[selected_channel]['graph_number'] = 1
+
+            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+            self.ui.channelsMenu_2.removeItem(index_2)
+            self.ui.channelsMenu_2.setCurrentIndex(0)
+            
+            self.ui.channelsMenu_1.addItem(selected_channel)
+            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+            self.ui.channelsMenu_1.setCurrentIndex(index_1)
+
+            self.timer_1.start(100)
+            self.ui.PlayPauseButton_1.setText("Pause")
+            self.playing_port_1 = True
+
+            if self.ui.channelsMenu_2.count() == 1:
+                self.playing_port_2 = False
+                self.ui.PlayPauseButton_2.setText("Play")
+
+            self.redraw1()
+            self.redraw2()
+
+    def scroll_graph_1_x(self, value):
+    # Calculate the new x-axis range based on the scrollbar's value
+      scroll_window = self.x_range_1[1] - self.x_range_1[0]
+      new_x_min = value / 100.0 * (scroll_window)
+      new_x_max = new_x_min + scroll_window
+      # Ensure the new_x_min doesn't go below zero
+      if new_x_min < 0:
+        new_x_min = 0  
+        new_x_max = scroll_window
+
+      # Set the updated x-axis range for the first plot
+      self.x_range_1 = [new_x_min, new_x_max]
+      self.plot_widget_1.setXRange(*self.x_range_1)
+
+      if self.linked:
+        self.x_range_2 = [new_x_min, new_x_max]
+        self.plot_widget_2.setXRange(*self.x_range_2)
+     
+    def scroll_graph_2_x(self, value):
+        scroll_window = self.x_range_2[1] - self.x_range_2[0]
+        new_x_min = value / 100.0 * (scroll_window)
+        new_x_max = new_x_min + scroll_window
+
+        # Ensure the new_x_min doesn't go below zero
+        if new_x_min < 0:
+            new_x_min = 0
+            new_x_max = scroll_window
+
+        # Set the updated x-axis range for the first plot
+        self.x_range_2 = [new_x_min, new_x_max]
+        self.plot_widget_2.setXRange(*self.x_range_2)
+
+        if self.linked:
+            self.x_range_1 = [new_x_min, new_x_max]
+            self.plot_widget_1.setXRange(*self.x_range_1)
+      
+    def scroll_graph_1_y(self, value):
+        # Calculate the new y-axis range based on the scrollbar's value
+        new_y_min = 0.0
+        new_y_max = value / 10.0  # Assuming a range of 0-1
+        
+        # Set the updated y-axis range for the first plot
+        self.y_range_1 = [new_y_min, new_y_max]
+        self.plot_widget_1.setYRange(*self.y_range_1)
+
+        if self.linked:
+            self.y_range_2 = [new_y_min, new_y_max]
+            self.plot_widget_2.setYRange(*self.y_range_2)
+    
+    def scroll_graph_2_y(self, value):
+        # Calculate the new y-axis range based on the scrollbar's value
+        new_y_min = 0.0
+        new_y_max = value / 10.0  # Assuming a range of 0-1
+        
+        # Set the updated y-axis range for the first plot
+        self.y_range_2 = [new_y_min, new_y_max]
+        self.plot_widget_2.setYRange(*self.y_range_2)
+
+        if self.linked:
+            self.y_range_1 = [new_y_min, new_y_max]
+            self.plot_widget_1.setYRange(*self.y_range_1)
+
+    def redraw1(self):
+        self.plot_widget_1.clear()
+        if self.ui.channelsMenu_1.currentText() == "All Channels":
+            print("All Channels")
+            for signal_name , signal in self.channel_data.items():
+                if signal['visible'] == True and signal['graph_number'] == 1:
+                    curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
+                    self.curves_1.append(curve)
+        else:
+            print("current signal ",self.ui.channelsMenu_1.currentText())
+            signal = self.get_channel_data(self.ui.channelsMenu_1.currentText())
+            if signal['visible'] == True and signal['graph_number'] == 1:
+                curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
+                self.curves_1.append(curve)
+            
+        self.plot_widget_1.setLabel('bottom', text='Time')
+        self.plot_widget_1.setLabel('left', text='Amplitude')
+        self.plot_widget_1.showGrid(x=True, y=True)
+        self.plot_widget_1.addLegend()
+    
+    def redraw2(self):
+        self.plot_widget_2.clear()
+        if self.ui.channelsMenu_2.currentText() == "All Channels":
+            print("All Channels")
+            for signal_name , signal in self.channel_data.items():
+                if signal['visible'] == True and signal['graph_number'] == 2:
+                    curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
+                    self.curves_2.append(curve)
+        else:
+            print("current signal ",self.ui.channelsMenu_2.currentText())
+            signal = self.get_channel_data(self.ui.channelsMenu_2.currentText())
+            if signal['visible'] == True and signal['graph_number'] == 2:
+                curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
+                self.curves_2.append(curve)
+            
+        self.plot_widget_2.setLabel('bottom', text='Time')
+        self.plot_widget_2.setLabel('left', text='Amplitude')
+        self.plot_widget_2.showGrid(x=True, y=True)
+        self.plot_widget_2.addLegend()
 
     #Linking
     def toggle_link_plots(self):
         if not self.linked:
-            self.playing_port_1 = True
-            self.playing_port_2 = True
             # Calculate minimum x-axis range
             min_x_range = min(self.x_range_1, self.x_range_2)
-            
             # Calculate minimum zoom level
             min_zoom_level = min(self.zoom_level_1, self.zoom_level_2)
-            
             # Calculate minimum speed
             min_x_range_speed = min(self.x_range_speed_1, self.x_range_speed_2)
             
@@ -182,7 +341,6 @@ class SignalViewerApp(QMainWindow):
             # Set the linked state
             self.linked = True
             self.ui.linkButton.setText("Unlink")
-            self.ui.linkButton.setText("Unlink")
             # Enable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
             self.ui.PlayPauseButton_3.setText("Pause")
             self.ui.PlayPauseButton_3.setEnabled(True)
@@ -192,7 +350,6 @@ class SignalViewerApp(QMainWindow):
         else:
             # Toggle the linked state back to unlinked
             self.linked = False
-            self.ui.linkButton.setText("Link")
             self.ui.linkButton.setText("Link")
             # Disable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
             self.ui.PlayPauseButton_3.setText("Play")
@@ -250,104 +407,78 @@ class SignalViewerApp(QMainWindow):
 
     # Color
     def showColorSelector(self, for_plot_1=True):
-        # Get the selected channel from the combo box
-        selected_channel = self.ui.channelsMenu_1.currentText() if for_plot_1 else self.ui.channelsMenu_2.currentText()
+        if for_plot_1:
+            selected_channel = self.ui.channelsMenu_1.currentText() 
+        else:
+            selected_channel = self.ui.channelsMenu_2.currentText()
         
         if selected_channel:
             color_dialog = QColorDialog(self)
             color = color_dialog.getColor()
             if color.isValid():
-                # Update the color of the selected channel in the channel_data dictionary
                 channel_data = self.get_channel_data(selected_channel)
                 channel_data['color'] = color
 
                 # Refresh the plot to apply the new color
-                graph = self.plot_widget_1 if for_plot_1 else self.plot_widget_2
-                channels_menu = self.ui.channelsMenu_1 if for_plot_1 else self.ui.channelsMenu_2
-                curves = self.curves_1 if for_plot_1 else self.curves_2
-                self.switch_channel(graph, channels_menu, curves)
+                if for_plot_1:
+                    self.redraw1()
+                else: 
+                    self.redraw2()
             else:
                 QtWidgets.QMessageBox.warning(self, 'Warning', 'Color is invalid!')
 
     # Reset
-    def reset_plot(self, graph_frame):
+    def reset_plot(self, for_plot_1=True):
       # Reset the x-axis range for the specified plot
-        if graph_frame == self.plot_widget_1:
+        if for_plot_1:
             self.x_range_1 = [0.0, 10.0]
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
             self.ui.ZoomSlider_1.setValue(4)
-        elif graph_frame == self.plot_widget_2:
+            self.redraw1()
+        else:
             self.x_range_2 = [0.0, 10.0]
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
             self.ui.ZoomSlider_2.setValue(4)
-    # Label
+            self.redraw2()
 
-    def save_channel_name(self):
-        if self.sender() == self.ui.SaveButton_1:
+    def save_channel_name(self, for_plot_1=True):
+        if for_plot_1:
             selected_channel = self.ui.channelsMenu_1.currentText()
-            new_channel_name = self.ui.editLabel_1.text()
+            new_name = self.ui.editLabel_1.text()
+            self.ui.editLabel_1.clear()
         else:
             selected_channel = self.ui.channelsMenu_2.currentText()
-            new_channel_name = self.ui.editLabel_2.text()
-
-        if new_channel_name in self.channel_data.keys():
-            if new_channel_name != selected_channel:
-                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
+            new_name = self.ui.editLabel_2.text()
+            self.ui.editLabel_2.clear()
+        
+        if new_name in self.channel_data.keys():
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
+        elif not new_name:
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Invalid Name!')
         else:
-            # Update the channel name in the dictionary
-            self.rename_channel(selected_channel, new_channel_name)
+            # Update the channel name in the data
+            if selected_channel in self.channel_data:
+                channel_data = self.channel_data[selected_channel]
+                self.channel_data[new_name] = channel_data
+                del self.channel_data[selected_channel]
 
-            # Update the channel name in the QComboBox
-            if self.sender() == self.ui.SaveButton_1:
-                self.ui.channelsMenu_1.setItemText(self.ui.channelsMenu_1.currentIndex(), new_channel_name)
+            # Update the channel name in the combo box & replot
+            if for_plot_1:
+                index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+                self.ui.channelsMenu_1.setItemText(index_1, new_name)
+                self.redraw1()
             else:
-                self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
+                index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+                self.ui.channelsMenu_2.setItemText(index_2, new_name)
+                self.redraw2()
 
-        # Remove text in editlabel
-        self.ui.editLabel_1.clear()
-        self.ui.editLabel_2.clear()
-
-
-    def rename_channel(self, channel_name, new_name):
-        if channel_name and new_name:
-            if new_name in self.channel_data.keys():
-                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
-            else:
-                # Update the channel name in the combo box
-                index_1 = self.ui.channelsMenu_1.findText(channel_name)
-                if index_1 >= 0:
-                    self.ui.channelsMenu_1.setItemText(index_1, new_name)
-                index_2 = self.ui.channelsMenu_2.findText(channel_name)
-                if index_2 >= 0:
-                    self.ui.channelsMenu_2.setItemText(index_2, new_name)
-            if new_name in self.channel_data.keys():
-                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
-            else:
-                # Update the channel name in the combo box
-                index_1 = self.ui.channelsMenu_1.findText(channel_name)
-                if index_1 >= 0:
-                    self.ui.channelsMenu_1.setItemText(index_1, new_name)
-                index_2 = self.ui.channelsMenu_2.findText(channel_name)
-                if index_2 >= 0:
-                    self.ui.channelsMenu_2.setItemText(index_2, new_name)
-
-                # Update the channel name in the data
-                if channel_name in self.channel_data:
-                    channel_data = self.channel_data[channel_name]
-                    self.channel_data[new_name] = channel_data
-                    del self.channel_data[channel_name]
-                # Update the channel name in the data
-                if channel_name in self.channel_data:
-                    channel_data = self.channel_data[channel_name]
-                    self.channel_data[new_name] = channel_data
-                    del self.channel_data[channel_name]
-
-    #Delete
     def delete_channel(self, graph_frame, combo_box, curves_list):
         selected_channel = combo_box.currentText()
-        if selected_channel:
+        # if selected_channel == "All Channels": delete all
+
+        if self.channel_data[selected_channel]:
             graph_frame.removeItem(curves_list[-1])
             curves_list.pop()
             self.channel_data.pop(selected_channel)
@@ -356,22 +487,18 @@ class SignalViewerApp(QMainWindow):
     def delete_channel_1(self):
         if self.curves_1:
             self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
-            if not self.curves_1:
-                self.toggle_playback_1()
-        if self.curves_1:
-            self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
-            if not self.curves_1:
-                self.toggle_playback_1()
+
+        if self.ui.channelsMenu_1.count() == 1:
+            self.playing_port_1 = False
+            self.ui.PlayPauseButton_1.setText("Play")
 
     def delete_channel_2(self):
         if self.curves_2:
             self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
-            if not self.curves_2:
-                self.toggle_playback_2()
-        if self.curves_2:
-            self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
-            if not self.curves_2:
-                self.toggle_playback_2()
+
+        if self.ui.channelsMenu_1.count() == 1:
+            self.playing_port_1 = False
+            self.ui.PlayPauseButton_1.setText("Play")
 
     def pdf(self):
       pdf.Exporter(self)
@@ -382,7 +509,6 @@ class SignalViewerApp(QMainWindow):
 
       # Update the x-axis range for the first plot
       self.x_range_1 = [self.x_range_1[0] + self.x_range_speed_1, self.x_range_1[1] + self.x_range_speed_1]
-      
       # Set the updated x-axis range for the first plot
       self.plot_widget_1.setXRange(*self.x_range_1)
 
@@ -391,39 +517,23 @@ class SignalViewerApp(QMainWindow):
         return
       # Update the x-axis range for the second plot
       self.x_range_2 = [self.x_range_2[0] + self.x_range_speed_2, self.x_range_2[1] + self.x_range_speed_2]
-
       # Set the updated x-axis range for the second plot
       self.plot_widget_2.setXRange(*self.x_range_2)
 
-    def switch_channel(self, graph_frame, combo_box, curves_list):
-        selected_channel = combo_box.currentText()
-        if selected_channel:
-            channel_data = self.get_channel_data(selected_channel)
-
-            graph_frame.clear()
-            graph_frame.setLabel('bottom', text='Time')
-            graph_frame.setLabel('left', text='Amplitude')
-
-            curve = graph_frame.plot(channel_data['time'], channel_data['amplitude'], name = selected_channel,  pen=channel_data['color'])
-            graph_frame.showGrid(x=True, y=True)
-            graph_frame.addLegend()
-
-            curves_list.clear()
-            curves_list.append(curve)
-
-    def select_channel_1(self, index):
-        self.switch_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
-
-    def select_channel_2(self, index):
-        self.switch_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
+    def switch_channel(self, for_plot_1=True):
+        if for_plot_1:
+            self.redraw1()
+        else:
+            self.redraw2
 
     def get_channel_data(self, channel_name):
         if channel_name in self.channel_data:
             return self.channel_data[channel_name]
         else:
-            return None  # Return None if the channel is not found
+            # Return None if the channel is not found
+            return None  
 
-    def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box, ):
+    def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box):
         try:
             with open(file_name, 'r') as csv_file:
                 csv_reader = csv.reader(csv_file)
@@ -438,39 +548,9 @@ class SignalViewerApp(QMainWindow):
                 time = []
                 amplitude = []
 
-                # Set labels
-                graph_frame.setLabel('bottom', text='Time')
-                graph_frame.setLabel('left', text='Amplitude')
-
-                # Set labels
-                graph_frame.setLabel('bottom', text='Time')
-                graph_frame.setLabel('left', text='Amplitude')
-
                 for row in csv_reader:
                     time.append(float(row[0]))
                     amplitude.append(float(row[1]))
-
-                # Clear existing data if it's the first plot
-                if graph_frame == self.plot_widget_1 and self.is_first_plot_1:
-                    graph_frame.clear()
-                    self.is_first_plot_1 = False
-                elif graph_frame == self.plot_widget_2 and self.is_first_plot_2:
-                    graph_frame.clear()
-                    self.is_first_plot_2 = False
-
-                # Add the channel name to the list
-                self.channel_counter += 1
-                channel_name = f"Channel {self.channel_counter}"
-
-                # Create a PlotDataItem to display the data
-                color_index = len(curves_list) % len(self.default_colors)  
-                color = self.default_colors[color_index]
-                curve = graph_frame.plot(time, amplitude, name = channel_name,  pen = color)
-                graph_frame.showGrid(x=True, y=True)
-                graph_frame.addLegend()
-
-                # Append the curve to the specified list
-                curves_list.append(curve)
 
                 graph_number = 0
                 # Start the respective timer to move the x-axis
@@ -485,21 +565,37 @@ class SignalViewerApp(QMainWindow):
                     self.playing_port_2 = True
                     graph_number = 2
     
-                # Create a dictionary to store channel data
+                # get color
+                color_index = len(curves_list) % len(self.default_colors)  
+                color = self.default_colors[color_index]
+
+                # get channel name
+                self.channel_counter += 1
+                channel_name = f"Channel {self.channel_counter}"
+
                 signal_data = {
                     'time': time,
                     'amplitude': amplitude,
-                    'color': color,  # More data will be added here
+                    'color': color,  
                     'graph_number': graph_number,
                     'visible': True
                 }
 
                 # Update the channel data dictionary
                 self.channel_data[channel_name] = signal_data
-
                 # Add the channel name to the combo box
-                combo_box.addItem(channel_name)  
+                combo_box.addItem(channel_name) 
+                
+                index = combo_box.findText(channel_name)
+                combo_box.setCurrentIndex(index)
+                print(combo_box.currentText(),"  ",combo_box.findText(combo_box.currentText()))
 
+                print(channel_name)
+                if graph_number == 1:
+                    self.redraw1()
+                else:
+                    self.redraw2()
+                
         except Exception as e:
             print("Error:", str(e))
 
@@ -517,63 +613,13 @@ class SignalViewerApp(QMainWindow):
             if playing_port:
                 # If it was playing, toggle the state to "Pause" when browsing
                 self.toggle_playback_1() if graph_frame == self.plot_widget_1 else self.toggle_playback_2()
-
-            # Check if the selected signal is not already in the list
-            if file_name not in self.selected_signals:
-                self.selected_signals.append(file_name)  # Add the selected signal to the list
-                self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
-            else:
-                QtWidgets.QMessageBox.warning(self, 'Warning', 'This signal is already selected.')
+            self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
 
     def browse_file_1(self):
         self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1)
 
     def browse_file_2(self):
         self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2)
-
-    def scroll_graph_1_x(self, value):
-      # Calculate the new x-axis range based on the scrollbar's value
-      scroll_window = self.x_range_1[1] - self.x_range_1[0]
-      new_x_min = value / 100.0 * (scroll_window)
-      new_x_max = new_x_min + scroll_window
-      # Ensure the new_x_min doesn't go below zero
-      if new_x_min < 0:
-        new_x_min = 0  
-        new_x_max = scroll_window
-
-      # Set the updated x-axis range for the first plot
-      self.x_range_1 = [new_x_min, new_x_max]
-      self.plot_widget_1.setXRange(*self.x_range_1)
-
-    def scroll_graph_2_x(self, value):
-    # Calculate the new x-axis range based on the scrollbar's value
-      scroll_window = self.x_range_2[1] - self.x_range_2[0]
-      new_x_min = value / 100.0 * (scroll_window)
-      new_x_max = new_x_min + scroll_window
-
-      # Ensure the new_x_min doesn't go below zero
-      if new_x_min < 0:
-        new_x_min = 0
-        new_x_max = scroll_window
-
-      # Set the updated x-axis range for the first plot
-      self.x_range_2 = [new_x_min, new_x_max]
-      self.plot_widget_2.setXRange(*self.x_range_2)
-
-    def scroll_graph_1_y(self, value):
-        y_min = 0.0  # Minimum value for the Y-axis range
-        
-        signal_y_max = 1  # Maximum value for the signal range
-
-        # Calculate the step size
-        step_size = 0.1
-
-        # Calculate the new_y_min and new_y_max based on the scrollbar value
-        new_y_min = y_min + value * step_size
-        new_y_max = new_y_min + signal_y_max
-
-        # Set the updated viewable Y-axis range for the first plot
-        self.plot_widget_1.setYRange(new_y_min, new_y_max)
 
     def toggle_playback_1(self):
         if self.playing_port_1:
@@ -582,7 +628,9 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_1.setText("Pause")
         
         self.playing_port_1 = not self.playing_port_1
-        if not self.curves_1:
+
+        print("count",self.ui.channelsMenu_1.count())
+        if self.ui.channelsMenu_1.count() == 1:
             self.playing_port_1 = False
             self.ui.PlayPauseButton_1.setText("Play")
 
@@ -624,45 +672,47 @@ class SignalViewerApp(QMainWindow):
       self.x_range_speed_1 = (value / 100.0) +0.01
 
     def update_playback_speed_2(self, value):
-      self.x_range_speed_2 = (value / 100.0) +0.01
+      self.x_range_speed_2 = (value / 100.0) +0.01   
 
     def toggle_visibility_1(self):
         selected_channel = self.ui.channelsMenu_1.currentText()
-        self.plot_widget_1.clear()
 
-        if self.ui.ShowHide_1.isChecked():
-            self.channel_data[selected_channel]['visible'] = True
+        if selected_channel == "All Channels":
+            for _ , signal in self.channel_data.items():
+                if signal['visible'] == True:
+                    signal['visible'] = False
+                else:
+                    signal['visible'] = True
         else:
-            self.channel_data[selected_channel]['visible'] = False
+            if self.ui.ShowHide_1.isChecked():
+                self.channel_data[selected_channel]['visible'] = True
+            else:
+                self.channel_data[selected_channel]['visible'] = False
 
-        # Force a redraw of the plot to reflect the changes
-        for signal_name , signal in self.channel_data.items():
-            print("signal name : ",signal_name,"  ", signal['visible'])
-            if signal['visible'] == True:
-                curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'])
-                self.curves_1.append(curve)
+        self.redraw1()
 
     def toggle_visibility_2(self):
         selected_channel = self.ui.channelsMenu_2.currentText()
-        self.plot_widget_2.clear()
 
-        if self.ui.ShowHide_2.isChecked():
-            self.channel_data[selected_channel]['visible'] = True
+        if selected_channel == "All Channels":
+            for _ , signal in self.channel_data.items():
+                if signal['visible'] == True:
+                    signal['visible'] = False
+                else:
+                    signal['visible'] = True
         else:
-            self.channel_data[selected_channel]['visible'] = False
+            if self.channel_data[selected_channel]['visible'] == True:
+                self.channel_data[selected_channel]['visible'] = False
+            else:
+                self.channel_data[selected_channel]['visible'] = True
 
-        # Force a redraw of the plot to reflect the changes
-        for signal_name , signal in self.channel_data.items():
-            print("signal name : ",signal_name,"  ", signal['visible'])
-            if signal['visible'] == True:
-                curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'])
-                self.curves_2.append(curve)
+        self.redraw2()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = SignalViewerApp()
     window.setWindowTitle("Digital Signal Viewer")
     app.setWindowIcon(QIcon("img/logo.png"))
-    window.resize(1100,850)
+    window.resize(1250,900)
     window.show()
     sys.exit(app.exec_())
