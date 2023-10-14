@@ -155,6 +155,8 @@ class SignalViewerApp(QMainWindow):
         self.play_pause_2_action.triggered.connect(self.toggle_playback_2)
         self.addAction(self.play_pause_2_action)
 
+        self.selected_signals = []
+
     #Linking
     def toggle_link_plots(self):
         if not self.linked:
@@ -281,6 +283,7 @@ class SignalViewerApp(QMainWindow):
             self.ui.SpeedSlider_2.setValue(4)
             self.ui.ZoomSlider_2.setValue(4)
     # Label
+
     def save_channel_name(self):
         if self.sender() == self.ui.SaveButton_1:
             selected_channel = self.ui.channelsMenu_1.currentText()
@@ -288,40 +291,24 @@ class SignalViewerApp(QMainWindow):
         else:
             selected_channel = self.ui.channelsMenu_2.currentText()
             new_channel_name = self.ui.editLabel_2.text()
-        
+
         if new_channel_name in self.channel_data.keys():
+            if new_channel_name != selected_channel:
                 QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
         else:
             # Update the channel name in the dictionary
             self.rename_channel(selected_channel, new_channel_name)
-            
-            # Update the channel name in the QComboBox
-            if self.sender() == self.ui.SaveButton_1:
-                self.ui.channelsMenu_1.setItemText(self.ui.channelsMenu_1.currentIndex(), new_channel_name)
-            else:
-                self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
-        if self.sender() == self.ui.SaveButton_1:
-            selected_channel = self.ui.channelsMenu_1.currentText()
-            new_channel_name = self.ui.editLabel_1.text()
-        else:
-            selected_channel = self.ui.channelsMenu_2.currentText()
-            new_channel_name = self.ui.editLabel_2.text()
-        
-        if new_channel_name in self.channel_data.keys():
-                QtWidgets.QMessageBox.warning(self, 'Warning', 'This name is already taken!')
-        else:
-            # Update the channel name in the dictionary
-            self.rename_channel(selected_channel, new_channel_name)
-            
+
             # Update the channel name in the QComboBox
             if self.sender() == self.ui.SaveButton_1:
                 self.ui.channelsMenu_1.setItemText(self.ui.channelsMenu_1.currentIndex(), new_channel_name)
             else:
                 self.ui.channelsMenu_2.setItemText(self.ui.channelsMenu_2.currentIndex(), new_channel_name)
 
-        # remove text in editlabel
+        # Remove text in editlabel
         self.ui.editLabel_1.clear()
         self.ui.editLabel_2.clear()
+
 
     def rename_channel(self, channel_name, new_name):
         if channel_name and new_name:
@@ -530,7 +517,13 @@ class SignalViewerApp(QMainWindow):
             if playing_port:
                 # If it was playing, toggle the state to "Pause" when browsing
                 self.toggle_playback_1() if graph_frame == self.plot_widget_1 else self.toggle_playback_2()
-            self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
+
+            # Check if the selected signal is not already in the list
+            if file_name not in self.selected_signals:
+                self.selected_signals.append(file_name)  # Add the selected signal to the list
+                self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
+            else:
+                QtWidgets.QMessageBox.warning(self, 'Warning', 'This signal is already selected.')
 
     def browse_file_1(self):
         self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1)
