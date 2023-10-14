@@ -334,7 +334,7 @@
                       <bool>false</bool>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 255);
+                      <string notr="true">background-color: rgb(0, 0, 0);
 margin: 3px;
 </string>
                      </property>
@@ -359,9 +359,6 @@ margin: 3px;
                        <width>16777215</width>
                        <height>9</height>
                       </size>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QScrollBar:horizontal {
@@ -397,9 +394,6 @@ QScrollBar::handle:horizontal {
                        <width>9</width>
                        <height>16777215</height>
                       </size>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QScrollBar:vertical {
@@ -525,9 +519,6 @@ QScrollBar::handle:vertical
                        <height>16777215</height>
                       </size>
                      </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
                      <property name="styleSheet">
                       <string notr="true">QScrollBar:vertical {
 	background-color: rgb(255, 255, 255);
@@ -538,15 +529,6 @@ QScrollBar::handle:vertical
  background-color: #c1c1c1;
 }
 </string>
-                     </property>
-                     <property name="maximum">
-                      <number>100</number>
-                     </property>
-                     <property name="value">
-                      <number>0</number>
-                     </property>
-                     <property name="sliderPosition">
-                      <number>0</number>
                      </property>
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -572,9 +554,6 @@ QScrollBar::handle:vertical
                        <width>16777215</width>
                        <height>9</height>
                       </size>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
                      </property>
                      <property name="styleSheet">
                       <string notr="true">QScrollBar:horizontal {
@@ -615,7 +594,7 @@ QScrollBar::handle:horizontal {
                       <bool>false</bool>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">background-color: rgb(255, 255, 255);
+                      <string notr="true">background-color: rgb(0, 0, 0);
 margin: 3px;
 </string>
                      </property>
@@ -1295,22 +1274,10 @@ QPushButton:hover {
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="minimum">
-                   <number>0</number>
-                  </property>
                   <property name="maximum">
                    <number>8</number>
                   </property>
-                  <property name="singleStep">
-                   <number>1</number>
-                  </property>
                   <property name="value">
-                   <number>4</number>
-                  </property>
-                  <property name="sliderPosition">
                    <number>4</number>
                   </property>
                   <property name="tracking">
@@ -1318,9 +1285,6 @@ QPushButton:hover {
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="invertedControls">
-                   <bool>false</bool>
                   </property>
                   <property name="tickPosition">
                    <enum>QSlider::TicksBelow</enum>
@@ -1674,9 +1638,6 @@ QPushButton:hover {
                   <property name="value">
                    <number>4</number>
                   </property>
-                  <property name="sliderPosition">
-                   <number>4</number>
-                  </property>
                   <property name="tracking">
                    <bool>true</bool>
                   </property>
@@ -1739,9 +1700,6 @@ QPushButton:hover {
                 </item>
                 <item>
                  <widget class="QSlider" name="ZoomSlider_3">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -1760,14 +1718,8 @@ QPushButton:hover {
                     <height>16777215</height>
                    </size>
                   </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
                   <property name="maximum">
                    <number>8</number>
-                  </property>
-                  <property name="pageStep">
-                   <number>1</number>
                   </property>
                   <property name="value">
                    <number>4</number>
@@ -2036,6 +1988,8 @@ QPushButton:hover {
                  </widget>
                 </item>
                </layout>
+               <zorder>deleteButton_2</zorder>
+               <zorder>BrowseButton_2</zorder>
               </widget>
              </item>
              <item>

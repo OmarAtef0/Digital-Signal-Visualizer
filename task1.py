@@ -139,7 +139,7 @@ class Ui_MainWindow(object):
         self.graph1.setMinimumSize(QtCore.QSize(356, 274))
         self.graph1.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.graph1.setAutoFillBackground(False)
-        self.graph1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        self.graph1.setStyleSheet("background-color: rgb(0, 0, 0);\n"
 "margin: 3px;\n"
 "")
         self.graph1.setObjectName("graph1")
@@ -152,7 +152,6 @@ class Ui_MainWindow(object):
         self.HorizontalScrollBar_1.setSizePolicy(sizePolicy)
         self.HorizontalScrollBar_1.setMinimumSize(QtCore.QSize(0, 9))
         self.HorizontalScrollBar_1.setMaximumSize(QtCore.QSize(16777215, 9))
-        self.HorizontalScrollBar_1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.HorizontalScrollBar_1.setStyleSheet("QScrollBar:horizontal {\n"
 "    background-color: rgb(255, 255, 255);\n"
 "}\n"
@@ -172,7 +171,6 @@ class Ui_MainWindow(object):
         self.VerticalScrollBar_1.setSizePolicy(sizePolicy)
         self.VerticalScrollBar_1.setMinimumSize(QtCore.QSize(9, 0))
         self.VerticalScrollBar_1.setMaximumSize(QtCore.QSize(9, 16777215))
-        self.VerticalScrollBar_1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.VerticalScrollBar_1.setStyleSheet("QScrollBar:vertical {\n"
 "    background-color: rgb(255, 255, 255);\n"
 "}\n"
@@ -228,7 +226,6 @@ class Ui_MainWindow(object):
         self.VerticalScrollBar_2.setSizePolicy(sizePolicy)
         self.VerticalScrollBar_2.setMinimumSize(QtCore.QSize(9, 0))
         self.VerticalScrollBar_2.setMaximumSize(QtCore.QSize(9, 16777215))
-        self.VerticalScrollBar_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.VerticalScrollBar_2.setStyleSheet("QScrollBar:vertical {\n"
 "    background-color: rgb(255, 255, 255);\n"
 "}\n"
@@ -238,9 +235,6 @@ class Ui_MainWindow(object):
 " background-color: #c1c1c1;\n"
 "}\n"
 "")
-        self.VerticalScrollBar_2.setMaximum(100)
-        self.VerticalScrollBar_2.setProperty("value", 0)
-        self.VerticalScrollBar_2.setSliderPosition(0)
         self.VerticalScrollBar_2.setOrientation(QtCore.Qt.Vertical)
         self.VerticalScrollBar_2.setObjectName("VerticalScrollBar_2")
         self.gridLayout_7.addWidget(self.VerticalScrollBar_2, 0, 0, 1, 1)
@@ -252,7 +246,6 @@ class Ui_MainWindow(object):
         self.HorizontalScrollBar_2.setSizePolicy(sizePolicy)
         self.HorizontalScrollBar_2.setMinimumSize(QtCore.QSize(0, 9))
         self.HorizontalScrollBar_2.setMaximumSize(QtCore.QSize(16777215, 9))
-        self.HorizontalScrollBar_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.HorizontalScrollBar_2.setStyleSheet("QScrollBar:horizontal {\n"
 "    background-color: rgb(255, 255, 255);\n"
 "}\n"
@@ -273,7 +266,7 @@ class Ui_MainWindow(object):
         self.graph2.setMinimumSize(QtCore.QSize(356, 274))
         self.graph2.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.graph2.setAutoFillBackground(False)
-        self.graph2.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        self.graph2.setStyleSheet("background-color: rgb(0, 0, 0);\n"
 "margin: 3px;\n"
 "")
         self.graph2.setObjectName("graph2")
@@ -532,15 +525,10 @@ class Ui_MainWindow(object):
         self.SpeedSlider_1.setMinimumSize(QtCore.QSize(0, 15))
         self.SpeedSlider_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.SpeedSlider_1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.SpeedSlider_1.setAutoFillBackground(False)
-        self.SpeedSlider_1.setMinimum(0)
         self.SpeedSlider_1.setMaximum(8)
-        self.SpeedSlider_1.setSingleStep(1)
         self.SpeedSlider_1.setProperty("value", 4)
-        self.SpeedSlider_1.setSliderPosition(4)
         self.SpeedSlider_1.setTracking(True)
         self.SpeedSlider_1.setOrientation(QtCore.Qt.Horizontal)
-        self.SpeedSlider_1.setInvertedControls(False)
         self.SpeedSlider_1.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.SpeedSlider_1.setTickInterval(0)
         self.SpeedSlider_1.setObjectName("SpeedSlider_1")
@@ -696,7 +684,6 @@ class Ui_MainWindow(object):
         self.SpeedSlider_3.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.SpeedSlider_3.setMaximum(8)
         self.SpeedSlider_3.setProperty("value", 4)
-        self.SpeedSlider_3.setSliderPosition(4)
         self.SpeedSlider_3.setTracking(True)
         self.SpeedSlider_3.setOrientation(QtCore.Qt.Horizontal)
         self.SpeedSlider_3.setTickPosition(QtWidgets.QSlider.TicksBelow)
@@ -723,7 +710,6 @@ class Ui_MainWindow(object):
         self.label_11.setObjectName("label_11")
         self.horizontalLayout_16.addWidget(self.label_11)
         self.ZoomSlider_3 = QtWidgets.QSlider(self.frame_16)
-        self.ZoomSlider_3.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -731,9 +717,7 @@ class Ui_MainWindow(object):
         self.ZoomSlider_3.setSizePolicy(sizePolicy)
         self.ZoomSlider_3.setMinimumSize(QtCore.QSize(0, 15))
         self.ZoomSlider_3.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.ZoomSlider_3.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ZoomSlider_3.setMaximum(8)
-        self.ZoomSlider_3.setPageStep(1)
         self.ZoomSlider_3.setProperty("value", 4)
         self.ZoomSlider_3.setTracking(True)
         self.ZoomSlider_3.setOrientation(QtCore.Qt.Horizontal)
@@ -846,6 +830,8 @@ class Ui_MainWindow(object):
         self.deleteButton_2.setStyleSheet("")
         self.deleteButton_2.setObjectName("deleteButton_2")
         self.horizontalLayout_21.addWidget(self.deleteButton_2)
+        self.deleteButton_2.raise_()
+        self.BrowseButton_2.raise_()
         self.verticalLayout_8.addWidget(self.frame_3)
         self.channel_2 = QtWidgets.QFrame(self.ControlPanel_2)
         self.channel_2.setMinimumSize(QtCore.QSize(0, 25))
