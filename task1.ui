@@ -291,7 +291,7 @@
                   <property name="minimumSize">
                    <size>
                     <width>370</width>
-                    <height>300</height>
+                    <height>390</height>
                    </size>
                   </property>
                   <property name="maximumSize">
@@ -480,7 +480,7 @@ QScrollBar::handle:vertical
                   <property name="minimumSize">
                    <size>
                     <width>370</width>
-                    <height>300</height>
+                    <height>390</height>
                    </size>
                   </property>
                   <property name="maximumSize">

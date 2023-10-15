@@ -283,13 +283,11 @@ class SignalViewerApp(QMainWindow):
     def redraw1(self):
         self.plot_widget_1.clear()
         if self.ui.channelsMenu_1.currentText() == "All Channels":
-            print("All Channels")
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 1:
                     curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
                     self.curves_1.append(curve)
         else:
-            print("current signal ",self.ui.channelsMenu_1.currentText())
             signal = self.get_channel_data(self.ui.channelsMenu_1.currentText())
             if signal['visible'] == True and signal['graph_number'] == 1:
                 curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
@@ -303,16 +301,14 @@ class SignalViewerApp(QMainWindow):
     def redraw2(self):
         self.plot_widget_2.clear()
         if self.ui.channelsMenu_2.currentText() == "All Channels":
-            print("All Channels")
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 2:
                     curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
                     self.curves_2.append(curve)
         else:
-            print("current signal ",self.ui.channelsMenu_2.currentText())
             signal = self.get_channel_data(self.ui.channelsMenu_2.currentText())
             if signal['visible'] == True and signal['graph_number'] == 2:
-                curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
+                curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_2.currentText())
                 self.curves_2.append(curve)
             
         self.plot_widget_2.setLabel('bottom', text='Time')
@@ -476,7 +472,6 @@ class SignalViewerApp(QMainWindow):
 
     def delete_channel(self, graph_frame, combo_box, curves_list):
         selected_channel = combo_box.currentText()
-        # if selected_channel == "All Channels": delete all
 
         if self.channel_data[selected_channel]:
             graph_frame.removeItem(curves_list[-1])
@@ -501,6 +496,8 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_1.setText("Play")
 
     def pdf(self):
+      self.ui.channelsMenu_1.setCurrentIndex(0)
+      self.ui.channelsMenu_2.setCurrentIndex(0)
       pdf.Exporter(self)
 
     def update_plot_1(self):
@@ -523,9 +520,37 @@ class SignalViewerApp(QMainWindow):
     def switch_channel(self, for_plot_1=True):
         if for_plot_1:
             self.redraw1()
-        else:
-            self.redraw2
+            selected_channel = self.ui.channelsMenu_1.currentText()
+            if selected_channel == "All Channels":
+                self.ui.SelectColor_1.setDisabled(True)
+                self.ui.editLabel_1.setDisabled(True)
+                self.ui.SaveButton_1.setDisabled(True)
+                self.ui.Moveto2.setDisabled(True)
+                self.ui.deleteButton_1.setDisabled(True)
+            else:
+                self.ui.SelectColor_1.setEnabled(True)
+                self.ui.editLabel_1.setEnabled(True)
+                self.ui.SaveButton_1.setEnabled(True)
+                self.ui.Moveto2.setEnabled(True)
+                self.ui.deleteButton_1.setEnabled(True)
 
+        else:
+            self.redraw2()
+            selected_channel = self.ui.channelsMenu_2.currentText()
+            if selected_channel == "All Channels":
+                self.ui.SelectColor_2.setDisabled(True)
+                self.ui.editLabel_2.setDisabled(True)
+                self.ui.SaveButton_2.setDisabled(True)
+                self.ui.Moveto1.setDisabled(True)
+                self.ui.deleteButton_2.setDisabled(True)
+
+            else:
+                self.ui.SelectColor_2.setEnabled(True)
+                self.ui.editLabel_2.setEnabled(True)
+                self.ui.SaveButton_2.setEnabled(True)
+                self.ui.Moveto1.setEnabled(True)
+                self.ui.deleteButton_2.setEnabled(True)
+        
     def get_channel_data(self, channel_name):
         if channel_name in self.channel_data:
             return self.channel_data[channel_name]
@@ -588,9 +613,7 @@ class SignalViewerApp(QMainWindow):
                 
                 index = combo_box.findText(channel_name)
                 combo_box.setCurrentIndex(index)
-                print(combo_box.currentText(),"  ",combo_box.findText(combo_box.currentText()))
 
-                print(channel_name)
                 if graph_number == 1:
                     self.redraw1()
                 else:
@@ -622,28 +645,29 @@ class SignalViewerApp(QMainWindow):
         self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2)
 
     def toggle_playback_1(self):
-        if self.playing_port_1:
-            self.ui.PlayPauseButton_1.setText("Play")
-        else:
-            self.ui.PlayPauseButton_1.setText("Pause")
-        
-        self.playing_port_1 = not self.playing_port_1
+        if not self.linked:
+            if self.playing_port_1:
+                self.ui.PlayPauseButton_1.setText("Play")
+            else:
+                self.ui.PlayPauseButton_1.setText("Pause")
+            
+            self.playing_port_1 = not self.playing_port_1
 
-        print("count",self.ui.channelsMenu_1.count())
-        if self.ui.channelsMenu_1.count() == 1:
-            self.playing_port_1 = False
-            self.ui.PlayPauseButton_1.setText("Play")
+            if self.ui.channelsMenu_1.count() == 1:
+                self.playing_port_1 = False
+                self.ui.PlayPauseButton_1.setText("Play")
 
     def toggle_playback_2(self):
-        if self.playing_port_2:
-            self.ui.PlayPauseButton_2.setText("Play")
-        else:
-            self.ui.PlayPauseButton_2.setText("Pause")
+        if not self.linked:
+            if self.playing_port_2:
+                self.ui.PlayPauseButton_2.setText("Play")
+            else:
+                self.ui.PlayPauseButton_2.setText("Pause")
 
-        self.playing_port_2 = not self.playing_port_2
-        if not self.curves_2:
-            self.playing_port_2 = False
-            self.ui.PlayPauseButton_2.setText("Play")
+            self.playing_port_2 = not self.playing_port_2
+            if not self.curves_2:
+                self.playing_port_2 = False
+                self.ui.PlayPauseButton_2.setText("Play")
 
     def toggle_playback_3(self):
       self.playing_port_1 = not self.playing_port_1

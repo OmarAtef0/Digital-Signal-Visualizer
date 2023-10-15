@@ -121,7 +121,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_4.sizePolicy().hasHeightForWidth())
         self.groupBox_4.setSizePolicy(sizePolicy)
-        self.groupBox_4.setMinimumSize(QtCore.QSize(370, 300))
+        self.groupBox_4.setMinimumSize(QtCore.QSize(370, 390))
         self.groupBox_4.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.groupBox_4.setStyleSheet("color: rgb(0, 0, 0);\n"
 "\n"
@@ -209,7 +209,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox_3.sizePolicy().hasHeightForWidth())
         self.groupBox_3.setSizePolicy(sizePolicy)
-        self.groupBox_3.setMinimumSize(QtCore.QSize(370, 300))
+        self.groupBox_3.setMinimumSize(QtCore.QSize(370, 390))
         self.groupBox_3.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.groupBox_3.setStyleSheet("color: rgb(0, 0, 0);\n"
 "\n"

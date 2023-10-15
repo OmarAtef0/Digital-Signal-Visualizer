@@ -52,13 +52,12 @@ def Exporter(self):
                 text_height = pdf.font_size
 
                 # declare an array of the arrays.  Also we declared the size
-                data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration'], [], [], []]
+                data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration']]
                 # add rows while there are signals
 
                 # This loop to draw the rest of the rows and to get the varibles to fill the table
                 for channel_name, channel_values in self.channel_data.items():
                     if channel_values['graph_number'] == 1:
-                        print(channel_name)
                         current_data = []
                         current_data.append(channel_name)
                         current_data.append(round(np.amax(channel_values['amplitude']), 4))
@@ -67,7 +66,6 @@ def Exporter(self):
                         current_data.append(round(np.std(channel_values['amplitude']), 4))
                         current_data.append(round(np.amax(channel_values['time']), 4))
                         data.append(current_data)
-                        print("current_data ",current_data)
 
                 # This 2 loops draw the Table
                 for row in data:
@@ -81,7 +79,7 @@ def Exporter(self):
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
                         else:
                             pdf.cell(column_width, 3*text_height,str(datum), border=1)
-                    pdf.ln(2.7)
+                    pdf.ln(3*text_height)
 
             # for graph2 check first if there is atleast one signal running
             if self.curves_2:
@@ -117,13 +115,12 @@ def Exporter(self):
                 text_height = pdf.font_size
 
                 # declare an array of the arrays.  Also we declared the size
-                data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration'], [], [], []]
+                data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration']]
                 # add rows while there are signals
 
                 # This loop to draw the rest of the rows and to get the varibles to fill the table
                 for channel_name, channel_values in self.channel_data.items():
                     if channel_values['graph_number'] == 2:
-                        print(channel_name)
                         current_data = []
                         current_data.append(channel_name)
                         current_data.append(round(np.amax(channel_values['amplitude']), 4))
@@ -132,7 +129,6 @@ def Exporter(self):
                         current_data.append(round(np.std(channel_values['amplitude']), 4))
                         current_data.append(round(np.amax(channel_values['time']), 4))
                         data.append(current_data)
-                        print("current_data ",current_data)
 
                 # This 2 loops draw the Table
                 for row in data:
@@ -146,7 +142,8 @@ def Exporter(self):
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
                         else:
                             pdf.cell(column_width, 3*text_height,str(datum), border=1)
-                    pdf.ln(2.7)
+                    pdf.ln(3*text_height)
+
 
             # Exporting the Pdf
             pdf.output(str(FolderPath[0]))
