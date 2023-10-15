@@ -14,7 +14,6 @@ class SignalViewerApp(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        # Set up the UI
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  
 
@@ -256,27 +255,40 @@ class SignalViewerApp(QMainWindow):
       
     def scroll_graph_1_y(self, value):
         # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = 0.0
-        new_y_max = value / 10.0  # Assuming a range of 0-1
-        
+        new_y_min = value / 100.0
+        new_y_max = new_y_min + 1.0  # Assuming a range of 0-1
+
+        # Ensure the new_y_min doesn't go below zero and new_y_max doesn't exceed 1.0
+        if new_y_min < 0:
+            new_y_min = 0
+        elif new_y_max > 1.0:
+            new_y_max = 1.0
+
         # Set the updated y-axis range for the first plot
         self.y_range_1 = [new_y_min, new_y_max]
         self.plot_widget_1.setYRange(*self.y_range_1)
 
         if self.linked:
             self.y_range_2 = [new_y_min, new_y_max]
-            self.plot_widget_2.setYRange(*self.y_range_2)
-    
+            self.plot_widget_2.setYRange(*self.y_range_2)  
+
     def scroll_graph_2_y(self, value):
         # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = 0.0
-        new_y_max = value / 10.0  # Assuming a range of 0-1
-        
+        new_y_min = value / 100.0
+        new_y_max = new_y_min + 1.0  # Assuming a range of 0-1
+
+        # Ensure the new_y_min doesn't go below zero and new_y_max doesn't exceed 1.0
+        if new_y_min < 0:
+            new_y_min = 0
+        elif new_y_max > 1.0:
+            new_y_max = 1.0
+
         # Set the updated y-axis range for the first plot
         self.y_range_2 = [new_y_min, new_y_max]
         self.plot_widget_2.setYRange(*self.y_range_2)
 
         if self.linked:
+            # Apply the same y-axis range to the second plot
             self.y_range_1 = [new_y_min, new_y_max]
             self.plot_widget_1.setYRange(*self.y_range_1)
 
