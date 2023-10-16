@@ -11,8 +11,6 @@ import numpy as np
 import main
 
 def Exporter(self):
-
-    #if there is signal ?
     if not self.curves_1 and not self.curves_2:
         # This message appears if there is no signal to EXPORT
         QtWidgets.QMessageBox.warning(self, 'Warning', 'You have to plot a signal first')
@@ -31,31 +29,42 @@ def Exporter(self):
 
                 pdf.set_font('Arial', 'B', 20)
                 pdf.cell(70)
-                pdf.cell(50, 10, 'Signal Viewer Report', 0, 0, 'C')
-                pdf.ln(20)
-
                 #        w    h             border  postion allignment 
-                pdf.cell(50, 10, 'Graph 1', 0, 0, 'C')
-                pdf.ln(20)
+                pdf.cell(50, 10, 'Signal Viewer Report', 0, 0, 'C')
+                pdf.ln(15)
+                
+                pdf.cell(20, 10, 'Graph 1', 0, 0, 'L')
+                pdf.ln(15)
 
-                ex3 = pg.exporters.ImageExporter(self.ui.graph1.plotItem)
-                ex3.export('img/graph1.png')
-                #                        x   y   w    h
-                pdf.image('img/graph1.png', 20, 50, 150, 100)
-                pdf.ln(120)
+                # iterate through snapshots of graph 1
+                x , y = 10 , 50
+                for i in range(min(self.snapshot1_counter,3)):
+                    #                                                x   y   w    h
+                    pdf.image(f'img/graph-1-snapshots/graph{i}.png', x, y, 60, 45)
+                    x += 65
+                pdf.ln(10)
+
+                if self.snapshot1_counter >= 3:
+                    x , y = 10 , 100
+                    for i in range(3,min(self.snapshot1_counter,6)):
+                        #                                                x   y   w    h
+                        pdf.image(f'img/graph-1-snapshots/graph{i}.png', x, y, 60, 45)
+                        x += 65
+                    pdf.ln(120)
+                else:
+                    pdf.ln(110)
 
                 pdf.cell(50, 10, 'Statistics data',0,0, 'C')
                 pdf.set_font('Arial', 'B', 10)
-                pdf.ln(20)
+                pdf.ln(15)
 
                 # Text height is the same as current font size
                 text_height = pdf.font_size
 
                 # declare an array of the arrays.  Also we declared the size
                 data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration']]
-                # add rows while there are signals
 
-                # This loop to draw the rest of the rows and to get the varibles to fill the table
+                # This loop used to draw the rest of the rows and to get the varibles to fill the table
                 for channel_name, channel_values in self.channel_data.items():
                     if channel_values['graph_number'] == 1:
                         current_data = []
@@ -73,7 +82,6 @@ def Exporter(self):
                         if datum == row[0]:
                             pdf.set_fill_color(200, 200, 200)
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
-
                         elif row == data[0]:
                             pdf.set_fill_color(200, 200, 200)
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
@@ -90,35 +98,47 @@ def Exporter(self):
                 column_width = epw/6
 
                 pdf.set_font('Arial', 'B', 20)
-                img2_y = 30
+                x , y = 10 , 50
+
                 if not self.curves_1:
                     pdf.cell(70)
                     pdf.cell(50, 10, 'Signal Viewer Report', 0, 0, 'C')
-                    pdf.ln(20)
-                    img2_y = 50
+                    pdf.ln(15)
+                    y += 10
+                
+                pdf.cell(15, 10, 'Graph 2', 0, 0, 'L')
+                pdf.ln(15)
 
-                #        w    h             border  postion allignment 
-                pdf.cell(50, 10, 'Graph 2', 0, 0, 'C')
-                pdf.ln(20)
+                # iterate through snapshots of graph 1
+                for i in range(min(self.snapshot2_counter,3)):
+                    #                                               x   y   w    h
+                    pdf.image(f'img/graph-2-snapshots/graph{i}.png', x, y, 60, 45)
+                    x += 65
+                pdf.ln(10)
 
-                ex3 = pg.exporters.ImageExporter(self.ui.graph2.plotItem)
-                ex3.export('img/graph2.png')
-                #                            x   y   w    h
-                pdf.image('img/graph2.png', 20, img2_y, 150, 100)
-                pdf.ln(120)
+                if self.snapshot2_counter >= 3:
+                    x , y = 10 , 100
+                    if not self.curves_1:
+                        y += 10
+                    for i in range(3,min(self.snapshot2_counter,6)):
+                        #                                                x   y   w    h
+                        pdf.image(f'img/graph-2-snapshots/graph{i}.png', x, y, 60, 45)
+                        x += 65
+                    pdf.ln(120)
+                else:
+                    pdf.ln(110)
 
                 pdf.cell(50, 10, 'Statistics data',0,0, 'C')
                 pdf.set_font('Arial', 'B', 10)
-                pdf.ln(20)
+                pdf.ln(15)
 
                 # Text height is the same as current font size
                 text_height = pdf.font_size
 
                 # declare an array of the arrays.  Also we declared the size
                 data = [['', 'Max', 'Min', 'Mean', 'Std_Dev', 'Duration']]
-                # add rows while there are signals
 
-                # This loop to draw the rest of the rows and to get the varibles to fill the table
+                # This loop used to draw the rest of the rows and to get the varibles to fill the table
                 for channel_name, channel_values in self.channel_data.items():
                     if channel_values['graph_number'] == 2:
                         current_data = []
@@ -136,14 +156,12 @@ def Exporter(self):
                         if datum == row[0]:
                             pdf.set_fill_color(200, 200, 200)
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
-
                         elif row == data[0]:
                             pdf.set_fill_color(200, 200, 200)
                             pdf.cell(column_width, 3*text_height,str(datum), border=1, fill=True)
                         else:
                             pdf.cell(column_width, 3*text_height,str(datum), border=1)
                     pdf.ln(3*text_height)
-
 
             # Exporting the Pdf
             pdf.output(str(FolderPath[0]))

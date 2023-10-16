@@ -33,6 +33,7 @@ class SignalViewerApp(QMainWindow):
         # Reset
         self.ui.ResetButton_1.clicked.connect(lambda: self.reset_plot(for_plot_1=True))
         self.ui.ResetButton_2.clicked.connect(lambda: self.reset_plot(for_plot_1=False))
+        self.ui.ResetButton_3.clicked.connect(lambda: self.reset_plot(for_plot_1=True))
 
         # scroll
         self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
@@ -71,8 +72,8 @@ class SignalViewerApp(QMainWindow):
         self.x_range_speed_2 = 0.05  # Should be done by a slider or button
         self.x_range_1 = [0.0, 10.0]  # Initial x-axis range for plot_widget_1
         self.x_range_2 = [0.0, 10.0]   # Initial x-axis range for plot_widget_2
-        self.plot_widget_1.setMouseEnabled(x=False, y=False)
-        self.plot_widget_2.setMouseEnabled(x=False, y=False)
+        # self.plot_widget_1.setMouseEnabled(x=False, y=False)
+        # self.plot_widget_2.setMouseEnabled(x=False, y=False)
 
         self.timer_1 = QTimer(self)
         self.timer_1.timeout.connect(self.update_plot_1)
@@ -90,6 +91,8 @@ class SignalViewerApp(QMainWindow):
         # Dict to store channel data (time, color, amplitude, etc..)
         self.channel_data = {}
         self.channel_counter = 0
+        self.snapshot1_counter = 0
+        self.snapshot2_counter = 0
 
         # Default Colors
         self.default_colors = [QColor(255, 0, 0),  # Red
@@ -107,6 +110,10 @@ class SignalViewerApp(QMainWindow):
         self.ui.deleteButton_1.clicked.connect(self.delete_channel_1)
         self.ui.deleteButton_2.clicked.connect(self.delete_channel_2)
 
+        #Snapshot Button 
+        self.ui.snapshot_1.clicked.connect(self.snapshot1)
+        self.ui.snapshot_2.clicked.connect(self.snapshot2)
+
         #Linking Plots 
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
@@ -116,7 +123,34 @@ class SignalViewerApp(QMainWindow):
         self.ui.SpeedSlider_3.setDisabled(True)
         self.ui.ZoomSlider_3.setDisabled(True)
         
-        ######Shortcuts########
+        #------------Shortcuts-----------------------------------------------------
+
+        #Snapshot Button Shortcut
+        self.snap1_button_shortcut = QKeySequence("Shift+S")
+        self.snap1_action = QAction(self)
+        self.snap1_action.setShortcut(self.snap1_button_shortcut)
+        self.snap1_action.triggered.connect(self.snapshot1)
+        self.addAction(self.snap1_action)
+
+        self.snap2_button_shortcut = QKeySequence("Shift+D")
+        self.snap2_action = QAction(self)
+        self.snap2_action.setShortcut(self.snap2_button_shortcut)
+        self.snap2_action.triggered.connect(self.snapshot2)
+        self.addAction(self.snap2_action)
+
+        #Delete Snapshot Shortcut
+        self.snap1_delete_shortcut = QKeySequence("Shift+Ctrl+S")
+        self.snap1_delete_action = QAction(self)
+        self.snap1_delete_action.setShortcut(self.snap1_delete_shortcut)
+        self.snap1_delete_action.triggered.connect(self.snapshot1_delete)
+        self.addAction(self.snap1_delete_action)
+
+        self.snap2_delete_shortcut = QKeySequence("Shift+Ctrl+D")
+        self.snap2_delete_action = QAction(self)
+        self.snap2_delete_action.setShortcut(self.snap2_delete_shortcut)
+        self.snap2_delete_action.triggered.connect(self.snapshot2_delete)
+        self.addAction(self.snap2_delete_action)
+
         #Link Button Shortcut
         self.link_button_shortcut = QKeySequence("Ctrl+L")
         self.link_action = QAction(self)
@@ -160,64 +194,111 @@ class SignalViewerApp(QMainWindow):
         self.ui.VerticalScrollBar_2.setRange(10,100)
         self.ui.VerticalScrollBar_2.setValue(10)
 
+        self.warn1 = False
+        self.warn2 = False
+
         #drag and drop el ghalaba
-        self.ui.Moveto1.clicked.connect(self.move_to1)
-        self.ui.Moveto2.clicked.connect(self.move_to2)
+        # self.ui.Moveto1.clicked.connect(self.move_to1)
+        # self.ui.Moveto2.clicked.connect(self.move_to2)
 
-    def move_to2(self):
-        selected_channel = self.ui.channelsMenu_1.currentText() 
+    # def move_to2(self):
+    #     selected_channel = self.ui.channelsMenu_1.currentText() 
 
-        if selected_channel == "All Channels":
-            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
-        else:
-            self.channel_data[selected_channel]['graph_number'] = 2
+    #     if selected_channel == "All Channels":
+    #         QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+    #     else:
+    #         self.channel_data[selected_channel]['graph_number'] = 2
 
-            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
-            self.ui.channelsMenu_1.removeItem(index_1)
-            self.ui.channelsMenu_1.setCurrentIndex(0)
+    #         index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+    #         self.ui.channelsMenu_1.removeItem(index_1)
+    #         self.ui.channelsMenu_1.setCurrentIndex(0)
             
-            self.ui.channelsMenu_2.addItem(selected_channel)
-            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
-            self.ui.channelsMenu_2.setCurrentIndex(index_2)
+    #         self.ui.channelsMenu_2.addItem(selected_channel)
+    #         index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+    #         self.ui.channelsMenu_2.setCurrentIndex(index_2)
 
-            self.timer_2.start(100)
-            self.ui.PlayPauseButton_2.setText("Pause")
-            self.playing_port_2 = True
+    #         self.timer_2.start(100)
+    #         self.ui.PlayPauseButton_2.setText("Pause")
+    #         self.playing_port_2 = True
 
-            if self.ui.channelsMenu_1.count() == 1:
-                self.playing_port_1 = False
-                self.ui.PlayPauseButton_1.setText("Play")
+    #         if self.ui.channelsMenu_1.count() == 1:
+    #             self.playing_port_1 = False
+    #             self.ui.PlayPauseButton_1.setText("Play")
 
-            self.redraw1()
-            self.redraw2()
+    #         self.redraw1()
+    #         self.redraw2()
 
-    def move_to1(self):
-        selected_channel = self.ui.channelsMenu_2.currentText() 
+    # def move_to1(self):
+    #     selected_channel = self.ui.channelsMenu_2.currentText() 
 
-        if selected_channel == "All Channels":
-            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
-        else:
-            self.channel_data[selected_channel]['graph_number'] = 1
+    #     if selected_channel == "All Channels":
+    #         QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+    #     else:
+    #         self.channel_data[selected_channel]['graph_number'] = 1
 
-            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
-            self.ui.channelsMenu_2.removeItem(index_2)
-            self.ui.channelsMenu_2.setCurrentIndex(0)
+    #         index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+    #         self.ui.channelsMenu_2.removeItem(index_2)
+    #         self.ui.channelsMenu_2.setCurrentIndex(0)
             
-            self.ui.channelsMenu_1.addItem(selected_channel)
-            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
-            self.ui.channelsMenu_1.setCurrentIndex(index_1)
+    #         self.ui.channelsMenu_1.addItem(selected_channel)
+    #         index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+    #         self.ui.channelsMenu_1.setCurrentIndex(index_1)
 
-            self.timer_1.start(100)
-            self.ui.PlayPauseButton_1.setText("Pause")
-            self.playing_port_1 = True
+    #         self.timer_1.start(100)
+    #         self.ui.PlayPauseButton_1.setText("Pause")
+    #         self.playing_port_1 = True
 
-            if self.ui.channelsMenu_2.count() == 1:
-                self.playing_port_2 = False
-                self.ui.PlayPauseButton_2.setText("Play")
+    #         if self.ui.channelsMenu_2.count() == 1:
+    #             self.playing_port_2 = False
+    #             self.ui.PlayPauseButton_2.setText("Play")
 
-            self.redraw1()
-            self.redraw2()
+    #         self.redraw1()
+    #         self.redraw2()
 
+    def snapshot1(self):
+        if not self.curves_1:
+            return
+        if self.warn1:
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You can take only 6 snapshots!')
+            return
+
+        ex = pg.exporters.ImageExporter(self.ui.graph1.plotItem)
+        ex.export(f'img/graph-1-snapshots/graph{self.snapshot1_counter}.png')
+        print(f"snapshot1 : {self.snapshot1_counter} TAKEN")
+        if self.snapshot1_counter < 6: 
+            self.snapshot1_counter += 1
+        if self.snapshot1_counter == 6:
+            self.warn1 = True
+    
+    def snapshot2(self):
+        if not self.curves_2:
+            return
+        if self.warn2:
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You can take only 6 snapshots!')
+            return
+        
+        ex = pg.exporters.ImageExporter(self.ui.graph2.plotItem)
+        ex.export(f'img/graph-2-snapshots/graph{self.snapshot2_counter}.png')
+        print(f"snapshot2 : {self.snapshot2_counter} TAKEN")
+        if self.snapshot2_counter < 6: 
+            self.snapshot2_counter += 1
+        if self.snapshot2_counter == 6:
+            self.warn2 = True
+    
+    def snapshot1_delete(self):
+        self.warn1 = False
+        print(f"delete {self.snapshot1_counter-1}")
+        if self.snapshot1_counter > 0:
+            self.snapshot1_counter -= 1
+            os.remove(f'img/graph-1-snapshots/graph{self.snapshot1_counter}.png')
+        
+    def snapshot2_delete(self):
+        self.warn2 = False
+        print(f"delete {self.snapshot2_counter-1}")
+        if self.snapshot2_counter > 0:
+            self.snapshot2_counter -= 1
+            os.remove(f'img/graph-2-snapshots/graph{self.snapshot2_counter}.png')
+            
     def scroll_graph_1_x(self, value):
     # Calculate the new x-axis range based on the scrollbar's value
       scroll_window = self.x_range_1[1] - self.x_range_1[0]
@@ -425,14 +506,24 @@ class SignalViewerApp(QMainWindow):
 
     # Reset
     def reset_plot(self, for_plot_1=True):
-      # Reset the x-axis range for the specified plot
-        if for_plot_1:
+        if self.linked:
             self.x_range_1 = [0.0, 10.0]
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
             self.ui.ZoomSlider_1.setValue(4)
             self.redraw1()
-        else:
+            self.x_range_2 = [0.0, 10.0]
+            self.plot_widget_2.setXRange(*self.x_range_2)
+            self.ui.SpeedSlider_2.setValue(4)
+            self.ui.ZoomSlider_2.setValue(4)
+            self.redraw2()
+        elif for_plot_1:
+            self.x_range_1 = [0.0, 10.0]
+            self.plot_widget_1.setXRange(*self.x_range_1)
+            self.ui.SpeedSlider_1.setValue(4)
+            self.ui.ZoomSlider_1.setValue(4)
+            self.redraw1()
+        elif not for_plot_1:
             self.x_range_2 = [0.0, 10.0]
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
@@ -491,19 +582,16 @@ class SignalViewerApp(QMainWindow):
         if self.curves_2:
             self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
 
-        if self.ui.channelsMenu_1.count() == 1:
-            self.playing_port_1 = False
-            self.ui.PlayPauseButton_1.setText("Play")
+        if self.ui.channelsMenu_2.count() == 1:
+            self.playing_port_2 = False
+            self.ui.PlayPauseButton_2.setText("Play")
 
     def pdf(self):
-      self.ui.channelsMenu_1.setCurrentIndex(0)
-      self.ui.channelsMenu_2.setCurrentIndex(0)
       pdf.Exporter(self)
 
     def update_plot_1(self):
       if not self.playing_port_1:
         return
-
       # Update the x-axis range for the first plot
       self.x_range_1 = [self.x_range_1[0] + self.x_range_speed_1, self.x_range_1[1] + self.x_range_speed_1]
       # Set the updated x-axis range for the first plot
@@ -525,13 +613,13 @@ class SignalViewerApp(QMainWindow):
                 self.ui.SelectColor_1.setDisabled(True)
                 self.ui.editLabel_1.setDisabled(True)
                 self.ui.SaveButton_1.setDisabled(True)
-                self.ui.Moveto2.setDisabled(True)
+                # self.ui.Moveto2.setDisabled(True)
                 self.ui.deleteButton_1.setDisabled(True)
             else:
                 self.ui.SelectColor_1.setEnabled(True)
                 self.ui.editLabel_1.setEnabled(True)
                 self.ui.SaveButton_1.setEnabled(True)
-                self.ui.Moveto2.setEnabled(True)
+                # self.ui.Moveto2.setEnabled(True)
                 self.ui.deleteButton_1.setEnabled(True)
 
         else:
@@ -541,14 +629,14 @@ class SignalViewerApp(QMainWindow):
                 self.ui.SelectColor_2.setDisabled(True)
                 self.ui.editLabel_2.setDisabled(True)
                 self.ui.SaveButton_2.setDisabled(True)
-                self.ui.Moveto1.setDisabled(True)
+                # self.ui.Moveto1.setDisabled(True)
                 self.ui.deleteButton_2.setDisabled(True)
 
             else:
                 self.ui.SelectColor_2.setEnabled(True)
                 self.ui.editLabel_2.setEnabled(True)
                 self.ui.SaveButton_2.setEnabled(True)
-                self.ui.Moveto1.setEnabled(True)
+                # self.ui.Moveto1.setEnabled(True)
                 self.ui.deleteButton_2.setEnabled(True)
         
     def get_channel_data(self, channel_name):
@@ -565,10 +653,13 @@ class SignalViewerApp(QMainWindow):
 
                 # Detect whether the first row is a header (contains titles)
                 has_header = csv.Sniffer().has_header(csv_file.read(1024))
-                csv_file.seek(0)  # Reset the file pointer
 
+                # Reset the file pointer
+                csv_file.seek(0)  
+                
+                # Skip the header row if it exists
                 if has_header:
-                    next(csv_reader)  # Skip the header row if it exists
+                    next(csv_reader)  
 
                 time = []
                 amplitude = []
@@ -623,6 +714,9 @@ class SignalViewerApp(QMainWindow):
             print("Error:", str(e))
 
     def browse_file(self, graph_frame, curves_list, combo_box):
+        if self.linked:
+            return
+        
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         options |= QFileDialog.ExistingFiles

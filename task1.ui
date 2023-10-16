@@ -70,8 +70,8 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>810</width>
-           <height>365</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -325,37 +325,9 @@
                     <number>5</number>
                    </property>
                    <item row="1" column="1">
-                    <widget class="QScrollBar" name="HorizontalScrollBar_1">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>9</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>9</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QScrollBar:horizontal {
-	background-color: rgb(255, 255, 255);
-}
-
-QScrollBar::handle:horizontal {
- background-color: #c1c1c1;
-}
-</string>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                    <widget class="QPushButton" name="snapshot_1">
+                     <property name="text">
+                      <string>Snapshot</string>
                      </property>
                     </widget>
                    </item>
@@ -424,6 +396,41 @@ QScrollBar::handle:vertical
                      </property>
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QScrollBar" name="HorizontalScrollBar_1">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>9</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>9</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">QScrollBar:horizontal {
+	background-color: rgb(255, 255, 255);
+}
+
+QScrollBar::handle:horizontal {
+ background-color: #c1c1c1;
+}
+</string>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
                      </property>
                     </widget>
                    </item>
@@ -549,7 +556,37 @@ QScrollBar::handle:vertical
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="1">
+                   <item row="0" column="1">
+                    <widget class="PlotWidget" name="graph2" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>356</width>
+                       <height>274</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="autoFillBackground">
+                      <bool>false</bool>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(0, 0, 0);
+margin: 3px;
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
                     <widget class="QScrollBar" name="HorizontalScrollBar_2">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -584,33 +621,10 @@ QScrollBar::handle:horizontal {
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
-                    <widget class="PlotWidget" name="graph2" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>356</width>
-                       <height>274</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>false</bool>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background-color: rgb(0, 0, 0);
-margin: 3px;
-</string>
+                   <item row="1" column="1">
+                    <widget class="QPushButton" name="snapshot_2">
+                     <property name="text">
+                      <string>Snapshot</string>
                      </property>
                     </widget>
                    </item>
@@ -637,7 +651,7 @@ margin: 3px;
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>300</height>
+           <height>320</height>
           </size>
          </property>
          <property name="frameShape">
@@ -693,7 +707,7 @@ margin: 3px;
               <number>5</number>
              </property>
              <property name="topMargin">
-              <number>2</number>
+              <number>9</number>
              </property>
              <property name="bottomMargin">
               <number>9</number>
@@ -1073,13 +1087,6 @@ margin: 3px;
                  </widget>
                 </item>
                </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="Moveto2">
-               <property name="text">
-                <string>Move to Graph2</string>
-               </property>
               </widget>
              </item>
              <item>
@@ -1468,8 +1475,11 @@ QPushButton:hover {
              <number>1</number>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_14">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <property name="topMargin">
-              <number>2</number>
+              <number>9</number>
              </property>
              <item alignment="Qt::AlignHCenter">
               <widget class="QFrame" name="frame_14">
@@ -1780,6 +1790,13 @@ QPushButton:hover {
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="ResetButton_3">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="Line" name="line_3">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1933,7 +1950,7 @@ QPushButton:hover {
               <number>5</number>
              </property>
              <property name="topMargin">
-              <number>2</number>
+              <number>9</number>
              </property>
              <item>
               <widget class="QFrame" name="frame_3">
@@ -2347,13 +2364,6 @@ QPushButton:hover {
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
-                <item>
-                 <widget class="QPushButton" name="Moveto1">
-                  <property name="text">
-                   <string>Move to Graph1</string>
-                  </property>
-                 </widget>
-                </item>
                 <item>
                  <widget class="Line" name="line_2">
                   <property name="sizePolicy">
