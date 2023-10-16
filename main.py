@@ -3,7 +3,7 @@ import csv
 import pdf
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider , QColorDialog, QAction, QTextEdit
-from PyQt5.QtCore import QTimer,Qt
+from PyQt5.QtCore import QTimer,Qt, QPointF
 from PyQt5.QtGui import QColor, QIcon, QCursor, QKeySequence
 import pyqtgraph as pg
 from pyqtgraph import PlotWidget
@@ -34,11 +34,6 @@ class SignalViewerApp(QMainWindow):
         self.ui.ResetButton_1.clicked.connect(lambda: self.reset_plot(for_plot_1=True))
         self.ui.ResetButton_2.clicked.connect(lambda: self.reset_plot(for_plot_1=False))
         self.ui.ResetButton_3.clicked.connect(lambda: self.reset_plot(for_plot_1=True))
-
-        # scroll
-        self.ui.HorizontalScrollBar_1.valueChanged.connect(self.scroll_graph_1_x)
-        self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
-        self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
 
         #show/hide
         self.ui.ShowHide_1.stateChanged.connect(self.toggle_visibility_1)
@@ -189,10 +184,8 @@ class SignalViewerApp(QMainWindow):
         self.ui.VerticalScrollBar_1.valueChanged.connect(self.scroll_graph_1_y)
         self.ui.VerticalScrollBar_2.valueChanged.connect(self.scroll_graph_2_y)
         self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
-        self.ui.VerticalScrollBar_1.setRange(10,100)
-        self.ui.VerticalScrollBar_1.setValue(10)
-        self.ui.VerticalScrollBar_2.setRange(10,100)
-        self.ui.VerticalScrollBar_2.setValue(10)
+        self.ui.VerticalScrollBar_1.setRange(-80,80)
+        self.ui.VerticalScrollBar_2.setRange(-80,80)
 
         self.warn1 = False
         self.warn2 = False
@@ -341,30 +334,21 @@ class SignalViewerApp(QMainWindow):
             self.plot_widget_1.setXRange(*self.x_range_1)
       
     def scroll_graph_1_y(self, value):
-        # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = 0.0
-        new_y_max = value / 10.0  # Assuming a range of 0-1
-        
-        # Set the updated y-axis range for the first plot
-        self.y_range_1 = [new_y_min, new_y_max]
-        self.plot_widget_1.setYRange(*self.y_range_1)
-
-        if self.linked:
-            self.y_range_2 = [new_y_min, new_y_max]
-            self.plot_widget_2.setYRange(*self.y_range_2)
+      min_amplitude = self.MinY + value/100
+      max_amplitude = self.MaxY + value/100  
+      self.plot_widget_1.setYRange(min_amplitude, max_amplitude)
+      if self.linked:
+          self.scroll_graph_2_y(value)
+          self.ui.VerticalScrollBar_2.setValue(value)
     
     def scroll_graph_2_y(self, value):
-        # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = 0.0
-        new_y_max = value / 10.0  # Assuming a range of 0-1
-        
-        # Set the updated y-axis range for the first plot
-        self.y_range_2 = [new_y_min, new_y_max]
-        self.plot_widget_2.setYRange(*self.y_range_2)
+      min_amplitude = self.MinY + value/100
+      max_amplitude = self.MaxY + value/100  
+      self.plot_widget_2.setYRange(min_amplitude, max_amplitude)
+      if self.linked:
+        self.scroll_graph_1_y(value)
+        self.ui.VerticalScrollBar_2.setValue(value)
 
-        if self.linked:
-            self.y_range_1 = [new_y_min, new_y_max]
-            self.plot_widget_1.setYRange(*self.y_range_1)
 
     def find_limits(self,for_plot_1=True):
         if for_plot_1:
@@ -385,8 +369,6 @@ class SignalViewerApp(QMainWindow):
 
                     if min(signal['amplitude']) < self.MinY:
                         self.MinY = min(signal['amplitude'])
-        
-        print(self.MinX," ",self.MaxX,"   ",self.MinY," ",self.MaxY)
 
     def redraw1(self):
         self.plot_widget_1.clear()
@@ -821,10 +803,10 @@ class SignalViewerApp(QMainWindow):
       self.plot_widget_2.setXRange(*self.x_range_2)
 
     def update_playback_speed_1(self, value):
-      self.x_range_speed_1 = (value / 100.0) +0.01
+      self.x_range_speed_1 = (value / 100.0) + 0.02
 
     def update_playback_speed_2(self, value):
-      self.x_range_speed_2 = (value / 100.0) +0.01   
+      self.x_range_speed_2 = (value / 100.0) + 0.02   
 
     def toggle_visibility_1(self):
         selected_channel = self.ui.channelsMenu_1.currentText()
