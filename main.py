@@ -68,10 +68,10 @@ class SignalViewerApp(QMainWindow):
         self.ui.channelsMenu_1.currentIndexChanged.connect(lambda: self.switch_channel(for_plot_1=True))
         self.ui.channelsMenu_2.currentIndexChanged.connect(lambda: self.switch_channel(for_plot_1=False))
 
-        self.x_range_speed_1 = 0.05  # Should be done by a slider or button
-        self.x_range_speed_2 = 0.05  # Should be done by a slider or button
-        self.x_range_1 = [0.0, 10.0]  # Initial x-axis range for plot_widget_1
-        self.x_range_2 = [0.0, 10.0]   # Initial x-axis range for plot_widget_2
+        self.x_range_speed_1 = 0.05  
+        self.x_range_speed_2 = 0.05  
+        self.x_range_1 = [0.0, 10.0]  
+        self.x_range_2 = [0.0, 10.0]   
         # self.plot_widget_1.setMouseEnabled(x=False, y=False)
         # self.plot_widget_2.setMouseEnabled(x=False, y=False)
 
@@ -196,6 +196,11 @@ class SignalViewerApp(QMainWindow):
 
         self.warn1 = False
         self.warn2 = False
+
+        self.MaxX = 0
+        self.MaxY = 0
+        self.MinX = 0
+        self.MinY = 0
 
         #drag and drop el ghalaba
         # self.ui.Moveto1.clicked.connect(self.move_to1)
@@ -361,8 +366,31 @@ class SignalViewerApp(QMainWindow):
             self.y_range_1 = [new_y_min, new_y_max]
             self.plot_widget_1.setYRange(*self.y_range_1)
 
+    def find_limits(self,for_plot_1=True):
+        if for_plot_1:
+            graph_number = 1
+        else:
+            graph_number = 2
+
+        for signal_name , signal in self.channel_data.items():
+                if signal['visible'] == True and signal['graph_number'] == graph_number:
+                    if max(signal['time']) > self.MaxX:
+                        self.MaxX = max(signal['time'])
+
+                    if min(signal['time']) < self.MinX:
+                        self.MinX = min(signal['time'])
+
+                    if max(signal['amplitude']) > self.MaxY:
+                        self.MaxY = max(signal['amplitude'])
+
+                    if min(signal['amplitude']) < self.MinY:
+                        self.MinY = min(signal['amplitude'])
+        
+        print(self.MinX," ",self.MaxX,"   ",self.MinY," ",self.MaxY)
+
     def redraw1(self):
         self.plot_widget_1.clear()
+        self.find_limits(True)
         if self.ui.channelsMenu_1.currentText() == "All Channels":
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 1:
@@ -373,7 +401,8 @@ class SignalViewerApp(QMainWindow):
             if signal['visible'] == True and signal['graph_number'] == 1:
                 curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
                 self.curves_1.append(curve)
-            
+                
+        self.plot_widget_1.plotItem.setLimits(xMin=self.MinX-0.5, xMax=self.MaxX+0.5, yMin=self.MinY-0.5, yMax=self.MaxY+0.5)
         self.plot_widget_1.setLabel('bottom', text='Time')
         self.plot_widget_1.setLabel('left', text='Amplitude')
         self.plot_widget_1.showGrid(x=True, y=True)
@@ -381,6 +410,7 @@ class SignalViewerApp(QMainWindow):
     
     def redraw2(self):
         self.plot_widget_2.clear()
+        self.find_limits(False)
         if self.ui.channelsMenu_2.currentText() == "All Channels":
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 2:
@@ -392,6 +422,7 @@ class SignalViewerApp(QMainWindow):
                 curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_2.currentText())
                 self.curves_2.append(curve)
             
+        self.plot_widget_2.plotItem.setLimits(xMin=self.MinX-0.5, xMax=self.MaxX+0.5, yMin=self.MinY-0.5, yMax=self.MaxY+0.5)
         self.plot_widget_2.setLabel('bottom', text='Time')
         self.plot_widget_2.setLabel('left', text='Amplitude')
         self.plot_widget_2.showGrid(x=True, y=True)
