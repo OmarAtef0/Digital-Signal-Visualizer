@@ -430,6 +430,9 @@ class SignalViewerApp(QMainWindow):
 
     #Linking
     def toggle_link_plots(self):
+        if not self.curves_1 or not self.curves_2:
+            return
+
         if not self.linked:
             # Calculate minimum x-axis range
             min_x_range = min(self.x_range_1, self.x_range_2)
