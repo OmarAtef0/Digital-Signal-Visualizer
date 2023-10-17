@@ -14,10 +14,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(900, 750)
-        MainWindow.setMinimumSize(QtCore.QSize(850, 700))
+        MainWindow.resize(1000, 750)
+        MainWindow.setMinimumSize(QtCore.QSize(1000, 700))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setMinimumSize(QtCore.QSize(850, 700))
+        self.centralwidget.setMinimumSize(QtCore.QSize(1000, 700))
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -340,9 +340,21 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.BrowseButton_1.sizePolicy().hasHeightForWidth())
         self.BrowseButton_1.setSizePolicy(sizePolicy)
-        self.BrowseButton_1.setMinimumSize(QtCore.QSize(100, 22))
+        self.BrowseButton_1.setMinimumSize(QtCore.QSize(120, 22))
         self.BrowseButton_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.BrowseButton_1.setStyleSheet("")
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.BrowseButton_1.setFont(font)
+        self.BrowseButton_1.setStyleSheet("QPushButton {\n"
+"    background-color: rgb(0, 85, 255);\n"
+"color:rgb(255, 255, 255);\n"
+"border-radius:5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgb(0, 50, 150);\n"
+"}\n"
+"")
         self.BrowseButton_1.setObjectName("BrowseButton_1")
         self.horizontalLayout_20.addWidget(self.BrowseButton_1)
         self.deleteButton_1 = QtWidgets.QPushButton(self.frame)
@@ -351,11 +363,22 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.deleteButton_1.sizePolicy().hasHeightForWidth())
         self.deleteButton_1.setSizePolicy(sizePolicy)
-        self.deleteButton_1.setMinimumSize(QtCore.QSize(120, 22))
+        self.deleteButton_1.setMinimumSize(QtCore.QSize(100, 22))
         self.deleteButton_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.deleteButton_1.setStyleSheet("")
         self.deleteButton_1.setObjectName("deleteButton_1")
         self.horizontalLayout_20.addWidget(self.deleteButton_1)
+        self.Move_1 = QtWidgets.QPushButton(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Move_1.sizePolicy().hasHeightForWidth())
+        self.Move_1.setSizePolicy(sizePolicy)
+        self.Move_1.setMinimumSize(QtCore.QSize(100, 22))
+        self.Move_1.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.Move_1.setStyleSheet("")
+        self.Move_1.setObjectName("Move_1")
+        self.horizontalLayout_20.addWidget(self.Move_1)
         self.verticalLayout_4.addWidget(self.frame)
         self.channel = QtWidgets.QFrame(self.ControlPanel_1)
         self.channel.setMinimumSize(QtCore.QSize(0, 25))
@@ -604,7 +627,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.LinkControls.sizePolicy().hasHeightForWidth())
         self.LinkControls.setSizePolicy(sizePolicy)
-        self.LinkControls.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.LinkControls.setMaximumSize(QtCore.QSize(250, 16777215))
         self.LinkControls.setFrameShape(QtWidgets.QFrame.Box)
         self.LinkControls.setFrameShadow(QtWidgets.QFrame.Raised)
         self.LinkControls.setLineWidth(1)
@@ -842,9 +865,23 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.BrowseButton_2.sizePolicy().hasHeightForWidth())
         self.BrowseButton_2.setSizePolicy(sizePolicy)
-        self.BrowseButton_2.setMinimumSize(QtCore.QSize(100, 22))
+        self.BrowseButton_2.setMinimumSize(QtCore.QSize(120, 22))
         self.BrowseButton_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.BrowseButton_2.setStyleSheet("")
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.BrowseButton_2.setFont(font)
+        self.BrowseButton_2.setStyleSheet("\n"
+"\n"
+"QPushButton {\n"
+"    background-color: rgb(0, 85, 255);\n"
+"color:rgb(255, 255, 255);\n"
+"border-radius:5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgb(0, 50, 150);\n"
+"}\n"
+"")
         self.BrowseButton_2.setObjectName("BrowseButton_2")
         self.horizontalLayout_21.addWidget(self.BrowseButton_2)
         self.deleteButton_2 = QtWidgets.QPushButton(self.frame_3)
@@ -858,8 +895,20 @@ class Ui_MainWindow(object):
         self.deleteButton_2.setStyleSheet("")
         self.deleteButton_2.setObjectName("deleteButton_2")
         self.horizontalLayout_21.addWidget(self.deleteButton_2)
+        self.Move_2 = QtWidgets.QPushButton(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Move_2.sizePolicy().hasHeightForWidth())
+        self.Move_2.setSizePolicy(sizePolicy)
+        self.Move_2.setMinimumSize(QtCore.QSize(100, 22))
+        self.Move_2.setMaximumSize(QtCore.QSize(250, 16777215))
+        self.Move_2.setStyleSheet("")
+        self.Move_2.setObjectName("Move_2")
+        self.horizontalLayout_21.addWidget(self.Move_2)
         self.deleteButton_2.raise_()
         self.BrowseButton_2.raise_()
+        self.Move_2.raise_()
         self.verticalLayout_8.addWidget(self.frame_3)
         self.channel_2 = QtWidgets.QFrame(self.ControlPanel_2)
         self.channel_2.setMinimumSize(QtCore.QSize(0, 25))
@@ -1119,6 +1168,7 @@ class Ui_MainWindow(object):
         self.snapshot_2.setText(_translate("MainWindow", "Snapshot"))
         self.BrowseButton_1.setText(_translate("MainWindow", "Browse Files"))
         self.deleteButton_1.setText(_translate("MainWindow", "Delete"))
+        self.Move_1.setText(_translate("MainWindow", "Move"))
         self.Channel_label.setText(_translate("MainWindow", "Select Channel"))
         self.channelsMenu_1.setItemText(0, _translate("MainWindow", "All Channels"))
         self.ShowHide_1.setText(_translate("MainWindow", "Show/Hide"))
@@ -1137,6 +1187,7 @@ class Ui_MainWindow(object):
         self.pdfButton.setText(_translate("MainWindow", " Generate PDF Report "))
         self.BrowseButton_2.setText(_translate("MainWindow", "Browse Files"))
         self.deleteButton_2.setText(_translate("MainWindow", "Delete"))
+        self.Move_2.setText(_translate("MainWindow", "Move"))
         self.Channel_label_2.setText(_translate("MainWindow", "Select Channel"))
         self.channelsMenu_2.setItemText(0, _translate("MainWindow", "All Channels"))
         self.ShowHide_2.setText(_translate("MainWindow", "Show/Hide"))

@@ -122,13 +122,13 @@ class SignalViewerApp(QMainWindow):
         #------------Shortcuts-----------------------------------------------------
 
         #Snapshot Button Shortcut
-        self.snap1_button_shortcut = QKeySequence("Shift+S")
+        self.snap1_button_shortcut = QKeySequence("Ctrl+S")
         self.snap1_action = QAction(self)
         self.snap1_action.setShortcut(self.snap1_button_shortcut)
         self.snap1_action.triggered.connect(self.snapshot1)
         self.addAction(self.snap1_action)
 
-        self.snap2_button_shortcut = QKeySequence("Shift+D")
+        self.snap2_button_shortcut = QKeySequence("Ctrl+D")
         self.snap2_action = QAction(self)
         self.snap2_action.setShortcut(self.snap2_button_shortcut)
         self.snap2_action.triggered.connect(self.snapshot2)
@@ -199,62 +199,64 @@ class SignalViewerApp(QMainWindow):
         self.MinY = 0
 
         #drag and drop el ghalaba
-        # self.ui.Moveto1.clicked.connect(self.move_to1)
-        # self.ui.Moveto2.clicked.connect(self.move_to2)
+        self.ui.Move_1.clicked.connect(self.move_to2)
+        self.ui.Move_2.clicked.connect(self.move_to1)
 
-    # def move_to2(self):
-    #     selected_channel = self.ui.channelsMenu_1.currentText() 
+    def move_to2(self):
+        selected_channel = self.ui.channelsMenu_1.currentText() 
+        print(selected_channel)
 
-    #     if selected_channel == "All Channels":
-    #         QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
-    #     else:
-    #         self.channel_data[selected_channel]['graph_number'] = 2
+        if selected_channel == "All Channels":
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+        else:
+            self.channel_data[selected_channel]['graph_number'] = 2
 
-    #         index_1 = self.ui.channelsMenu_1.findText(selected_channel)
-    #         self.ui.channelsMenu_1.removeItem(index_1)
-    #         self.ui.channelsMenu_1.setCurrentIndex(0)
+            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+            self.ui.channelsMenu_1.removeItem(index_1)
+            self.ui.channelsMenu_1.setCurrentIndex(0)
             
-    #         self.ui.channelsMenu_2.addItem(selected_channel)
-    #         index_2 = self.ui.channelsMenu_2.findText(selected_channel)
-    #         self.ui.channelsMenu_2.setCurrentIndex(index_2)
+            self.ui.channelsMenu_2.addItem(selected_channel)
+            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+            self.ui.channelsMenu_2.setCurrentIndex(index_2)
 
-    #         self.timer_2.start(100)
-    #         self.ui.PlayPauseButton_2.setText("Pause")
-    #         self.playing_port_2 = True
+            self.timer_2.start(100)
+            self.ui.PlayPauseButton_2.setText("Pause")
+            self.playing_port_2 = True
 
-    #         if self.ui.channelsMenu_1.count() == 1:
-    #             self.playing_port_1 = False
-    #             self.ui.PlayPauseButton_1.setText("Play")
+            if self.ui.channelsMenu_1.count() == 1:
+                self.playing_port_1 = False
+                self.ui.PlayPauseButton_1.setText("Play")
 
-    #         self.redraw1()
-    #         self.redraw2()
+            self.redraw1()
+            self.redraw2()
 
-    # def move_to1(self):
-    #     selected_channel = self.ui.channelsMenu_2.currentText() 
+    def move_to1(self):
+        selected_channel = self.ui.channelsMenu_2.currentText() 
+        print(selected_channel)
+        
+        if selected_channel == "All Channels":
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
+        else:
+            self.channel_data[selected_channel]['graph_number'] = 1
 
-    #     if selected_channel == "All Channels":
-    #         QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
-    #     else:
-    #         self.channel_data[selected_channel]['graph_number'] = 1
-
-    #         index_2 = self.ui.channelsMenu_2.findText(selected_channel)
-    #         self.ui.channelsMenu_2.removeItem(index_2)
-    #         self.ui.channelsMenu_2.setCurrentIndex(0)
+            index_2 = self.ui.channelsMenu_2.findText(selected_channel)
+            self.ui.channelsMenu_2.removeItem(index_2)
+            self.ui.channelsMenu_2.setCurrentIndex(0)
             
-    #         self.ui.channelsMenu_1.addItem(selected_channel)
-    #         index_1 = self.ui.channelsMenu_1.findText(selected_channel)
-    #         self.ui.channelsMenu_1.setCurrentIndex(index_1)
+            self.ui.channelsMenu_1.addItem(selected_channel)
+            index_1 = self.ui.channelsMenu_1.findText(selected_channel)
+            self.ui.channelsMenu_1.setCurrentIndex(index_1)
 
-    #         self.timer_1.start(100)
-    #         self.ui.PlayPauseButton_1.setText("Pause")
-    #         self.playing_port_1 = True
+            self.timer_1.start(100)
+            self.ui.PlayPauseButton_1.setText("Pause")
+            self.playing_port_1 = True
 
-    #         if self.ui.channelsMenu_2.count() == 1:
-    #             self.playing_port_2 = False
-    #             self.ui.PlayPauseButton_2.setText("Play")
+            if self.ui.channelsMenu_2.count() == 1:
+                self.playing_port_2 = False
+                self.ui.PlayPauseButton_2.setText("Play")
 
-    #         self.redraw1()
-    #         self.redraw2()
+            self.redraw1()
+            self.redraw2()
 
     def snapshot1(self):
         if not self.curves_1:
@@ -434,6 +436,10 @@ class SignalViewerApp(QMainWindow):
             self.x_range_speed_2 = min_x_range_speed
             
             # Set the linked state
+            if not self.playing_port_1:
+                self.toggle_playback_1()
+            if not self.playing_port_2:
+                self.toggle_playback_2()
             self.linked = True
             self.ui.linkButton.setText("Unlink")
             # Enable PlayPauseButton_3, SpeedSlider_3, and ZoomSlider_3
@@ -451,6 +457,12 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_3.setDisabled(True)
             self.ui.SpeedSlider_3.setDisabled(True)
             self.ui.ZoomSlider_3.setDisabled(True)
+            if self.playing_port_1:
+                self.ui.PlayPauseButton_1.setText("Pause") 
+                self.ui.PlayPauseButton_2.setText("Pause") 
+            else:
+                self.ui.PlayPauseButton_1.setText("Play") 
+                self.ui.PlayPauseButton_2.setText("Play") 
 
         # Enable or disable ControlPanel_1 and ControlPanel_2 as needed
         self.ui.ControlPanel_1.setDisabled(self.linked)

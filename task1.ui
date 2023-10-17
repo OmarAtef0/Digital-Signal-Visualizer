@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>1000</width>
     <height>750</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>850</width>
+    <width>1000</width>
     <height>700</height>
    </size>
   </property>
@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralwidget">
    <property name="minimumSize">
     <size>
-     <width>850</width>
+     <width>1000</width>
      <height>700</height>
     </size>
    </property>
@@ -794,7 +794,7 @@ QScrollBar::handle:horizontal {
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>120</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -804,8 +804,22 @@ QScrollBar::handle:horizontal {
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
-                   <string notr="true"/>
+                   <string notr="true">QPushButton {
+    background-color: rgb(0, 85, 255);
+color:rgb(255, 255, 255);
+border-radius:5px;
+}
+
+QPushButton:hover {
+    background-color: rgb(0, 50, 150);
+}
+</string>
                   </property>
                   <property name="text">
                    <string>Browse Files</string>
@@ -822,7 +836,7 @@ QScrollBar::handle:horizontal {
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>120</width>
+                    <width>100</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -837,6 +851,34 @@ QScrollBar::handle:horizontal {
                   </property>
                   <property name="text">
                    <string>Delete</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="Move_1">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="text">
+                   <string>Move</string>
                   </property>
                  </widget>
                 </item>
@@ -1494,7 +1536,7 @@ QPushButton:hover {
             </property>
             <property name="maximumSize">
              <size>
-              <width>16777215</width>
+              <width>250</width>
               <height>16777215</height>
              </size>
             </property>
@@ -2034,7 +2076,7 @@ QPushButton:hover {
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>100</width>
+                    <width>120</width>
                     <height>22</height>
                    </size>
                   </property>
@@ -2044,8 +2086,24 @@ QPushButton:hover {
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
-                   <string notr="true"/>
+                   <string notr="true">
+
+QPushButton {
+    background-color: rgb(0, 85, 255);
+color:rgb(255, 255, 255);
+border-radius:5px;
+}
+
+QPushButton:hover {
+    background-color: rgb(0, 50, 150);
+}
+</string>
                   </property>
                   <property name="text">
                    <string>Browse Files</string>
@@ -2080,9 +2138,38 @@ QPushButton:hover {
                   </property>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="Move_2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>250</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="text">
+                   <string>Move</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
                <zorder>deleteButton_2</zorder>
                <zorder>BrowseButton_2</zorder>
+               <zorder>Move_2</zorder>
               </widget>
              </item>
              <item>
