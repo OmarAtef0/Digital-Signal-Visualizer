@@ -855,7 +855,8 @@ class SignalViewerApp(QMainWindow):
         self.plot_widget_1.plotItem.getViewBox().scaleBy((1.25, 1.25))  # Decrease the zoom level
 
     def update_zoom_in_2(self):
-        self.plot_widget_2.plotItem.getViewBox().scaleBy((0.75, 0.75))  # Increase the zoom level
+       self.plot_widget_2.plotItem.getViewBox().scaleBy((0.75, 0.75))  # Increase the zoom level 
+       
 
     def update_zoom_out_2(self):
         self.plot_widget_2.plotItem.getViewBox().scaleBy((1.25, 1.25))  # Decrease the zoom level
@@ -869,10 +870,10 @@ class SignalViewerApp(QMainWindow):
         self.update_zoom_out_2()
 
     def update_playback_speed_1(self, value):
-      self.x_range_speed_1 = (value / 100.0) + 0.1
+      self.x_range_speed_1 = (value / 100.0) + 0.12
 
     def update_playback_speed_2(self, value):
-      self.x_range_speed_2 = (value / 100.0) + 0.1 
+      self.x_range_speed_2 = (value / 100.0) + 0.12
 
     def update_playback_speed_3(self, value):
         self.update_playback_speed_1(value)
