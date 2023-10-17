@@ -5,13 +5,23 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QSlider , QColorDialog, QAction, QTextEdit
 from PyQt5.QtCore import QTimer,Qt, QPointF
 from PyQt5.QtGui import QColor, QIcon, QCursor, QKeySequence
+from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QProgressBar, QDialog, QVBoxLayout
 import pyqtgraph as pg
 from pyqtgraph import PlotWidget
 from task1 import Ui_MainWindow
 import os
 
-class SignalViewerApp(QMainWindow):
+class ProgressThread(QThread):
+    update_progress = pyqtSignal(int)
 
+    def run(self):
+        for i in range(101):
+            self.update_progress.emit(i)
+            self.msleep(50)
+
+
+class SignalViewerApp(QMainWindow):
     def __init__(self):
         super().__init__()
         # Set up the UI
@@ -24,6 +34,7 @@ class SignalViewerApp(QMainWindow):
         #browse
         self.ui.BrowseButton_1.clicked.connect(self.browse_file_1)
         self.ui.BrowseButton_2.clicked.connect(self.browse_file_2)
+        # self.ui.BrowseButton_2.clicked.connect(self.show_popup)
 
         #play/pause
         self.ui.PlayPauseButton_1.clicked.connect(self.toggle_playback_1)
@@ -206,6 +217,35 @@ class SignalViewerApp(QMainWindow):
         #drag and drop el ghalaba
         self.ui.Move_1.clicked.connect(self.move_to2)
         self.ui.Move_2.clicked.connect(self.move_to1)
+
+        #progress bar popup window
+        self.progress_dialog = QDialog()
+        self.progress_dialog.setWindowTitle("Saving PDF File")
+        self.progress_dialog.setFixedSize(300, 100)
+
+        self.progress_bar = QProgressBar(self.progress_dialog)
+        self.progress_bar.setGeometry(50, 30, 200, 30)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.progress_bar)
+        self.progress_dialog.setLayout(layout)
+
+        self.progress_thread = ProgressThread()
+        self.progress_thread.update_progress.connect(self.update_progress_bar)
+
+    # def check_application(self):
+    #     if self.applicationState() == 2:  
+    #         self.show_popup()
+
+    def show_popup(self):
+        self.progress_bar.setValue(0)
+        self.progress_dialog.show()
+        self.progress_thread.start()
+
+    def update_progress_bar(self, value):
+        self.progress_bar.setValue(value)
+        if value == 100:
+            self.progress_dialog.close()
 
     def move_to2(self):
         selected_channel = self.ui.channelsMenu_1.currentText() 
@@ -618,6 +658,7 @@ class SignalViewerApp(QMainWindow):
 
     def pdf(self):
         if self.snapshot1_counter == 0 and self.snapshot2_counter == 0:
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'You must take atleast one snapshot!')
             return
         
         pdf.Exporter(self)
