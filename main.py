@@ -228,9 +228,9 @@ class SignalViewerApp(QMainWindow):
         self.progress_thread = ProgressThread()
         self.progress_thread.update_progress.connect(self.update_progress_bar)
 
-    def check_application(self):
-        if self.applicationState() == 2:  
-            self.show_popup()
+    # def check_application(self):
+    #     if self.applicationState() == 2:  
+    #         self.show_popup()
 
     def show_popup(self):
         self.progress_bar.setValue(0)
