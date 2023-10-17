@@ -40,8 +40,12 @@ class SignalViewerApp(QMainWindow):
         self.ui.ShowHide_2.stateChanged.connect(self.toggle_visibility_2)
         
         #zoom
-        self.ui.ZoomSlider_1.valueChanged.connect(self.update_zoom_1)
-        self.ui.ZoomSlider_2.valueChanged.connect(self.update_zoom_2)
+        self.ui.ZoomIn_1.clicked.connect(self.update_zoom_in_1)
+        self.ui.ZoomOut_1.clicked.connect(self.update_zoom_out_1)
+        self.ui.ZoomIn_2.clicked.connect(self.update_zoom_in_2)
+        self.ui.ZoomOut_2.clicked.connect(self.update_zoom_out_2)
+        self.ui.ZoomIn_3.clicked.connect(self.update_zoom_in_3)
+        self.ui.ZoomOut_3.clicked.connect(self.update_zoom_out_3)
 
         #speed
         self.ui.SpeedSlider_1.valueChanged.connect(self.update_playback_speed_1)
@@ -113,10 +117,11 @@ class SignalViewerApp(QMainWindow):
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
         self.ui.SpeedSlider_3.valueChanged.connect(self.update_playback_speed_3)
-        self.ui.ZoomSlider_3.valueChanged.connect(self.update_zoom_3)
+    
         self.ui.PlayPauseButton_3.setDisabled(True)
         self.ui.SpeedSlider_3.setDisabled(True)
-        self.ui.ZoomSlider_3.setDisabled(True)
+        self.ui.ZoomIn_3.setDisabled(True)
+        self.ui.ZoomOut_3.setDisabled(True)
         self.ui.ResetButton_3.setDisabled(True)
         
         #------------Shortcuts-----------------------------------------------------
@@ -377,6 +382,7 @@ class SignalViewerApp(QMainWindow):
     def redraw1(self):
         self.plot_widget_1.clear()
         self.find_limits(True)
+        self.plot_widget_1.plotItem.getViewBox().scaleBy((1, 1))
         if self.ui.channelsMenu_1.currentText() == "All Channels":
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 1:
@@ -397,6 +403,7 @@ class SignalViewerApp(QMainWindow):
     def redraw2(self):
         self.plot_widget_2.clear()
         self.find_limits(False)
+        self.plot_widget_2.plotItem.getViewBox().scaleBy((1, 1))
         if self.ui.channelsMenu_2.currentText() == "All Channels":
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 2:
@@ -446,7 +453,9 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_3.setText("Pause")
             self.ui.PlayPauseButton_3.setEnabled(True)
             self.ui.SpeedSlider_3.setEnabled(True)
-            self.ui.ZoomSlider_3.setEnabled(True)
+            self.ui.ZoomIn_3.setEnabled(True)
+            self.ui.ZoomOut_3.setEnabled(True)
+            self.ui.ResetButton_3.setEnabled(True)
 
         else:
             # Toggle the linked state back to unlinked
@@ -456,7 +465,7 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_3.setText("Play")
             self.ui.PlayPauseButton_3.setDisabled(True)
             self.ui.SpeedSlider_3.setDisabled(True)
-            self.ui.ZoomSlider_3.setDisabled(True)
+            # self.ui.ZoomSlider_3.setDisabled(True)
             if self.playing_port_1:
                 self.ui.PlayPauseButton_1.setText("Pause") 
                 self.ui.PlayPauseButton_2.setText("Pause") 
@@ -527,7 +536,6 @@ class SignalViewerApp(QMainWindow):
             self.x_range_speed_1 = 0.05
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
-            self.ui.ZoomSlider_1.setValue(4)
             self.ui.VerticalScrollBar_1.setValue(0)
             self.redraw1()
 
@@ -535,7 +543,6 @@ class SignalViewerApp(QMainWindow):
             self.x_range_speed_2 = 0.05
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
-            self.ui.ZoomSlider_2.setValue(4)
             self.ui.VerticalScrollBar_2.setValue(0)
             self.redraw2()
         elif for_plot_1:
@@ -543,7 +550,6 @@ class SignalViewerApp(QMainWindow):
             self.x_range_speed_1 = 0.05
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
-            self.ui.ZoomSlider_1.setValue(4)
             self.ui.VerticalScrollBar_1.setValue(0)
             self.redraw1()
         elif not for_plot_1:
@@ -551,7 +557,6 @@ class SignalViewerApp(QMainWindow):
             self.x_range_speed_2 = 0.05
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
-            self.ui.ZoomSlider_2.setValue(4)
             self.ui.VerticalScrollBar_2.setValue(0)
             self.redraw2()
 
@@ -802,21 +807,25 @@ class SignalViewerApp(QMainWindow):
         else:
             self.ui.PlayPauseButton_3.setText("Play")
 
-    def update_zoom_1(self, value):
-      self.zoom_level_1 = value / 4 + 0.1
-      # Update the x-axis range of the plots
-      self.x_range_1 = [0, 10 * self.zoom_level_1]
-      self.plot_widget_1.setXRange(*self.x_range_1) 
+    def update_zoom_in_1(self):    
+        self.plot_widget_1.plotItem.getViewBox().scaleBy((0.75, 0.75))  # Increase the zoom level
 
-    def update_zoom_2(self, value):
-      self.zoom_level_2 = value / 4 + 0.1
-      # Update the x-axis range of the plots
-      self.x_range_2 = [0, 10 * self.zoom_level_2]
-      self.plot_widget_2.setXRange(*self.x_range_2)
+    def update_zoom_out_1(self):
+        self.plot_widget_1.plotItem.getViewBox().scaleBy((1.25, 1.25))  # Decrease the zoom level
 
-    def update_zoom_3(self, value):
-        self.update_zoom_1(value)
-        self.update_zoom_2(value)
+    def update_zoom_in_2(self):
+        self.plot_widget_2.plotItem.getViewBox().scaleBy((0.75, 0.75))  # Increase the zoom level
+
+    def update_zoom_out_2(self):
+        self.plot_widget_2.plotItem.getViewBox().scaleBy((1.25, 1.25))  # Decrease the zoom level
+
+    def update_zoom_in_3(self):
+        self.update_zoom_in_1()
+        self.update_zoom_in_2()
+
+    def update_zoom_out_3(self):
+        self.update_zoom_out_1()
+        self.update_zoom_out_2()
 
     def update_playback_speed_1(self, value):
       self.x_range_speed_1 = (value / 100.0) + 0.1
