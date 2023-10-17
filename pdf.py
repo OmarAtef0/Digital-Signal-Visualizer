@@ -17,6 +17,7 @@ def Exporter(self):
     else:
         FolderPath = QFileDialog.getSaveFileName(None, str('Save the signal file'), None, str("PDF FIles(*.pdf)"))
         if FolderPath != '':
+            self.check_application()
             pdf = FPDF()
 
             # for graph1 check first if there is atleast one signal running
