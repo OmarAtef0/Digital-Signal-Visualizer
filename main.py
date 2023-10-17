@@ -14,6 +14,7 @@ class SignalViewerApp(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        # Set up the UI
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)  
 
@@ -338,45 +339,6 @@ class SignalViewerApp(QMainWindow):
             self.plot_widget_1.setXRange(*self.x_range_1)
       
     def scroll_graph_1_y(self, value):
-<<<<<<< HEAD
-        # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = value / 100.0
-        new_y_max = new_y_min + 1.0  # Assuming a range of 0-1
-
-        # Ensure the new_y_min doesn't go below zero and new_y_max doesn't exceed 1.0
-        if new_y_min < 0:
-            new_y_min = 0
-        elif new_y_max > 1.0:
-            new_y_max = 1.0
-
-        # Set the updated y-axis range for the first plot
-        self.y_range_1 = [new_y_min, new_y_max]
-        self.plot_widget_1.setYRange(*self.y_range_1)
-
-        if self.linked:
-            self.y_range_2 = [new_y_min, new_y_max]
-            self.plot_widget_2.setYRange(*self.y_range_2)  
-
-    def scroll_graph_2_y(self, value):
-        # Calculate the new y-axis range based on the scrollbar's value
-        new_y_min = value / 100.0
-        new_y_max = new_y_min + 1.0  # Assuming a range of 0-1
-
-        # Ensure the new_y_min doesn't go below zero and new_y_max doesn't exceed 1.0
-        if new_y_min < 0:
-            new_y_min = 0
-        elif new_y_max > 1.0:
-            new_y_max = 1.0
-
-        # Set the updated y-axis range for the first plot
-        self.y_range_2 = [new_y_min, new_y_max]
-        self.plot_widget_2.setYRange(*self.y_range_2)
-
-        if self.linked:
-            # Apply the same y-axis range to the second plot
-            self.y_range_1 = [new_y_min, new_y_max]
-            self.plot_widget_1.setYRange(*self.y_range_1)
-=======
       min_amplitude = self.MinY + value/100
       max_amplitude = self.MaxY + value/100  
       self.plot_widget_1.setYRange(min_amplitude, max_amplitude)
@@ -411,7 +373,6 @@ class SignalViewerApp(QMainWindow):
 
                     if min(signal['amplitude']) < self.MinY:
                         self.MinY = min(signal['amplitude'])
->>>>>>> cd6473e0f8536024a888b79183b8c5223bee3a13
 
     def redraw1(self):
         self.plot_widget_1.clear()
