@@ -67,8 +67,8 @@ class SignalViewerApp(QMainWindow):
         self.x_range_speed_2 = 0.05  
         self.x_range_1 = [0.0, 10.0]  
         self.x_range_2 = [0.0, 10.0]   
-        # self.plot_widget_1.setMouseEnabled(x=False, y=False)
-        # self.plot_widget_2.setMouseEnabled(x=False, y=False)
+        self.plot_widget_1.setMouseEnabled(x=False, y=False)
+        self.plot_widget_2.setMouseEnabled(x=False, y=False)
 
         self.timer_1 = QTimer(self)
         self.timer_1.timeout.connect(self.update_plot_1)
@@ -112,11 +112,12 @@ class SignalViewerApp(QMainWindow):
         #Linking Plots 
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
-        self.ui.SpeedSlider_3.valueChanged.connect(self.update_both_plots_speed)
-        self.ui.ZoomSlider_3.valueChanged.connect(self.update_both_plots_zoom)
+        self.ui.SpeedSlider_3.valueChanged.connect(self.update_playback_speed_3)
+        self.ui.ZoomSlider_3.valueChanged.connect(self.update_zoom_3)
         self.ui.PlayPauseButton_3.setDisabled(True)
         self.ui.SpeedSlider_3.setDisabled(True)
         self.ui.ZoomSlider_3.setDisabled(True)
+        self.ui.ResetButton_3.setDisabled(True)
         
         #------------Shortcuts-----------------------------------------------------
 
@@ -186,6 +187,8 @@ class SignalViewerApp(QMainWindow):
         self.ui.HorizontalScrollBar_2.valueChanged.connect(self.scroll_graph_2_x)
         self.ui.VerticalScrollBar_1.setRange(-80,80)
         self.ui.VerticalScrollBar_2.setRange(-80,80)
+        self.ui.VerticalScrollBar_1.setSingleStep(10)
+        self.ui.VerticalScrollBar_2.setSingleStep(5)
 
         self.warn1 = False
         self.warn2 = False
@@ -349,7 +352,6 @@ class SignalViewerApp(QMainWindow):
         self.scroll_graph_1_y(value)
         self.ui.VerticalScrollBar_2.setValue(value)
 
-
     def find_limits(self,for_plot_1=True):
         if for_plot_1:
             graph_number = 1
@@ -484,20 +486,6 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_2.setStyleSheet(btn_active)
             self.ui.PlayPauseButton_3.setStyleSheet(btn_inactive)
 
-    def update_both_plots_speed(self, value):
-        # Update speed for both plots
-        self.x_range_speed_1 = value / 100.0
-        self.x_range_speed_2 = value / 100.0
-
-    def update_both_plots_zoom(self, value):
-      # Update zoom level for both plots
-      self.zoom_level_1 = value / 4
-      self.zoom_level_2 = value / 4
-      self.x_range_1 = [0, 10 * self.zoom_level_1]
-      self.x_range_2 = [0, 10 * self.zoom_level_2]
-      self.plot_widget_1.setXRange(*self.x_range_1) 
-      self.plot_widget_2.setXRange(*self.x_range_2)
-
     # Color
     def showColorSelector(self, for_plot_1=True):
         if for_plot_1:
@@ -524,26 +512,35 @@ class SignalViewerApp(QMainWindow):
     def reset_plot(self, for_plot_1=True):
         if self.linked:
             self.x_range_1 = [0.0, 10.0]
+            self.x_range_speed_1 = 0.05
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
             self.ui.ZoomSlider_1.setValue(4)
+            self.ui.VerticalScrollBar_1.setValue(0)
             self.redraw1()
+
             self.x_range_2 = [0.0, 10.0]
+            self.x_range_speed_2 = 0.05
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
             self.ui.ZoomSlider_2.setValue(4)
+            self.ui.VerticalScrollBar_2.setValue(0)
             self.redraw2()
         elif for_plot_1:
             self.x_range_1 = [0.0, 10.0]
+            self.x_range_speed_1 = 0.05
             self.plot_widget_1.setXRange(*self.x_range_1)
             self.ui.SpeedSlider_1.setValue(4)
             self.ui.ZoomSlider_1.setValue(4)
+            self.ui.VerticalScrollBar_1.setValue(0)
             self.redraw1()
         elif not for_plot_1:
             self.x_range_2 = [0.0, 10.0]
+            self.x_range_speed_2 = 0.05
             self.plot_widget_2.setXRange(*self.x_range_2)
             self.ui.SpeedSlider_2.setValue(4)
             self.ui.ZoomSlider_2.setValue(4)
+            self.ui.VerticalScrollBar_2.setValue(0)
             self.redraw2()
 
     def save_channel_name(self, for_plot_1=True):
@@ -603,7 +600,10 @@ class SignalViewerApp(QMainWindow):
             self.ui.PlayPauseButton_2.setText("Play")
 
     def pdf(self):
-      pdf.Exporter(self)
+        if self.snapshot1_counter == 0 and self.snapshot2_counter == 0:
+            return
+        
+        pdf.Exporter(self)
 
     def update_plot_1(self):
       if not self.playing_port_1:
@@ -662,7 +662,7 @@ class SignalViewerApp(QMainWindow):
             # Return None if the channel is not found
             return None  
 
-    def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box):
+    def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box, ):
         try:
             with open(file_name, 'r') as csv_file:
                 csv_reader = csv.reader(csv_file)
@@ -729,7 +729,7 @@ class SignalViewerApp(QMainWindow):
         except Exception as e:
             print("Error:", str(e))
 
-    def browse_file(self, graph_frame, curves_list, combo_box):
+    def browse_file(self, graph_frame, curves_list, combo_box, playing_port):
         if self.linked:
             return
         
@@ -742,86 +742,88 @@ class SignalViewerApp(QMainWindow):
         )
 
         if file_name:
-            playing_port = self.playing_port_1 if graph_frame == self.plot_widget_1 else self.playing_port_2
             if playing_port:
                 # If it was playing, toggle the state to "Pause" when browsing
                 self.toggle_playback_1() if graph_frame == self.plot_widget_1 else self.toggle_playback_2()
             self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
 
     def browse_file_1(self):
-        self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1)
+        self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1,self.playing_port_1)
 
     def browse_file_2(self):
-        self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2)
+        self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2,self.playing_port_2)
 
     def toggle_playback_1(self):
         if not self.linked:
+            if self.ui.channelsMenu_1.count() == 1:
+                self.playing_port_1 = False
+                self.ui.PlayPauseButton_1.setText("Play")
+                return
+
             if self.playing_port_1:
                 self.ui.PlayPauseButton_1.setText("Play")
             else:
                 self.ui.PlayPauseButton_1.setText("Pause")
             
             self.playing_port_1 = not self.playing_port_1
-
-            if self.ui.channelsMenu_1.count() == 1:
-                self.playing_port_1 = False
-                self.ui.PlayPauseButton_1.setText("Play")
-
+            
     def toggle_playback_2(self):
         if not self.linked:
+            if self.ui.channelsMenu_2.count() == 1:
+                self.playing_port_2 = False
+                self.ui.PlayPauseButton_2.setText("Play")
+                return
+            
             if self.playing_port_2:
                 self.ui.PlayPauseButton_2.setText("Play")
             else:
                 self.ui.PlayPauseButton_2.setText("Pause")
 
             self.playing_port_2 = not self.playing_port_2
-            if not self.curves_2:
-                self.playing_port_2 = False
-                self.ui.PlayPauseButton_2.setText("Play")
-
+            
     def toggle_playback_3(self):
-      self.playing_port_1 = not self.playing_port_1
-      self.playing_port_2 = not self.playing_port_2
-      self.update_playback_button(self.playing_port_2, self.ui.PlayPauseButton_3)
+        self.playing_port_1 = not self.playing_port_1
+        self.playing_port_2 = not self.playing_port_2
 
-    def update_playback_button(self, playing, button):
-        if playing:
-            button.setText("Pause")
+        if self.playing_port_2:
+            self.ui.PlayPauseButton_3.setText("Pause")
         else:
-            button.setText("Play")
+            self.ui.PlayPauseButton_3.setText("Play")
 
     def update_zoom_1(self, value):
-      self.zoom_level_1 = value / 4
+      self.zoom_level_1 = value / 4 + 0.1
       # Update the x-axis range of the plots
       self.x_range_1 = [0, 10 * self.zoom_level_1]
       self.plot_widget_1.setXRange(*self.x_range_1) 
 
     def update_zoom_2(self, value):
-      self.zoom_level_2 = value / 4
+      self.zoom_level_2 = value / 4 + 0.1
       # Update the x-axis range of the plots
       self.x_range_2 = [0, 10 * self.zoom_level_2]
       self.plot_widget_2.setXRange(*self.x_range_2)
 
+    def update_zoom_3(self, value):
+        self.update_zoom_1(value)
+        self.update_zoom_2(value)
+
     def update_playback_speed_1(self, value):
-      self.x_range_speed_1 = (value / 100.0) + 0.02
+      self.x_range_speed_1 = (value / 100.0) + 0.1
 
     def update_playback_speed_2(self, value):
-      self.x_range_speed_2 = (value / 100.0) + 0.02   
+      self.x_range_speed_2 = (value / 100.0) + 0.1 
+
+    def update_playback_speed_3(self, value):
+        self.update_playback_speed_1(value)
+        self.update_playback_speed_2(value)
 
     def toggle_visibility_1(self):
         selected_channel = self.ui.channelsMenu_1.currentText()
 
         if selected_channel == "All Channels":
             for _ , signal in self.channel_data.items():
-                if signal['visible'] == True:
-                    signal['visible'] = False
-                else:
-                    signal['visible'] = True
+                signal['visible'] = not signal['visible']
         else:
-            if self.ui.ShowHide_1.isChecked():
-                self.channel_data[selected_channel]['visible'] = True
-            else:
-                self.channel_data[selected_channel]['visible'] = False
+            self.channel_data[selected_channel]['visible'] = not self.channel_data[selected_channel]['visible']
 
         self.redraw1()
 
@@ -830,15 +832,9 @@ class SignalViewerApp(QMainWindow):
 
         if selected_channel == "All Channels":
             for _ , signal in self.channel_data.items():
-                if signal['visible'] == True:
-                    signal['visible'] = False
-                else:
-                    signal['visible'] = True
+                signal['visible'] = not signal['visible']
         else:
-            if self.channel_data[selected_channel]['visible'] == True:
-                self.channel_data[selected_channel]['visible'] = False
-            else:
-                self.channel_data[selected_channel]['visible'] = True
+            self.channel_data[selected_channel]['visible'] = not self.channel_data[selected_channel]['visible']
 
         self.redraw2()
 
