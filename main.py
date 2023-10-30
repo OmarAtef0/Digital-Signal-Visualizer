@@ -50,6 +50,7 @@ class SignalViewerApp(QMainWindow):
         #speed
         self.ui.SpeedSlider_1.valueChanged.connect(self.update_playback_speed_1)
         self.ui.SpeedSlider_2.valueChanged.connect(self.update_playback_speed_2)
+        self.ui.SpeedSlider_3.valueChanged.connect(self.update_playback_speed_3)
 
         #color
         self.ui.SelectColor_1.clicked.connect(lambda: self.showColorSelector(for_plot_1=True))
@@ -84,20 +85,22 @@ class SignalViewerApp(QMainWindow):
         self.timer_2 = QTimer(self)
         self.timer_2.timeout.connect(self.update_plot_2)
 
-        self.is_first_plot_1 = True
-        self.is_first_plot_2 = True
-
         # Lists to store curves for each plot widget
-        self.curves_1 = []
-        self.curves_2 = []
+        self.curves_1 = False
+        self.curves_2 = False
 
         # Dict to store channel data (time, color, amplitude, etc..)
         self.channel_data = {}
         self.channel_counter = 0
+
         self.snapshot1_counter = 0
         self.snapshot2_counter = 0
+
+        # Zoom
         self.zoom_level_1 = 5.0
         self.zoom_level_2 = 5.0
+
+
         self.playing_port_1 = False 
         self.playing_port_2 = False
 
@@ -119,7 +122,6 @@ class SignalViewerApp(QMainWindow):
         #Linking Plots 
         self.linked = False
         self.ui.linkButton.clicked.connect(self.toggle_link_plots)
-        self.ui.SpeedSlider_3.valueChanged.connect(self.update_playback_speed_3)
     
         self.ui.PlayPauseButton_3.setDisabled(True)
         self.ui.SpeedSlider_3.setDisabled(True)
@@ -213,7 +215,6 @@ class SignalViewerApp(QMainWindow):
 
     def move_to2(self):
         selected_channel = self.ui.channelsMenu_1.currentText() 
-        print(selected_channel)
 
         if selected_channel == "All Channels":
             QtWidgets.QMessageBox.warning(self, 'Warning', 'You cannot move all channels at once')
@@ -269,6 +270,7 @@ class SignalViewerApp(QMainWindow):
     def snapshot1(self):
         if not self.curves_1:
             return
+        
         if self.warn1:
             QtWidgets.QMessageBox.warning(self, 'Warning', 'You can take only 6 snapshots!')
             return
@@ -390,12 +392,12 @@ class SignalViewerApp(QMainWindow):
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 1:
                     curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
-                    self.curves_1.append(curve)
+                    self.curves_1 = True
         else:
             signal = self.get_channel_data(self.ui.channelsMenu_1.currentText())
             if signal['visible'] == True and signal['graph_number'] == 1:
                 curve = self.plot_widget_1.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_1.currentText())
-                self.curves_1.append(curve)
+                self.curves_1 = True
                 
         self.plot_widget_1.plotItem.setLimits(xMin=self.MinX-0.5, xMax=self.MaxX+0.5, yMin=self.MinY-0.5, yMax=self.MaxY+0.5)
         self.plot_widget_1.setLabel('bottom', text='Time')
@@ -411,12 +413,12 @@ class SignalViewerApp(QMainWindow):
             for signal_name , signal in self.channel_data.items():
                 if signal['visible'] == True and signal['graph_number'] == 2:
                     curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=signal_name)
-                    self.curves_2.append(curve)
+                    self.curves_2 = True
         else:
             signal = self.get_channel_data(self.ui.channelsMenu_2.currentText())
             if signal['visible'] == True and signal['graph_number'] == 2:
                 curve = self.plot_widget_2.plot(signal['time'], signal['amplitude'], pen=signal['color'], name=self.ui.channelsMenu_2.currentText())
-                self.curves_2.append(curve)
+                self.curves_2 = True
             
         self.plot_widget_2.plotItem.setLimits(xMin=self.MinX-0.5, xMax=self.MaxX+0.5, yMin=self.MinY-0.5, yMax=self.MaxY+0.5)
         self.plot_widget_2.setLabel('bottom', text='Time')
@@ -601,18 +603,26 @@ class SignalViewerApp(QMainWindow):
                 self.ui.channelsMenu_2.setItemText(index_2, new_name)
                 self.redraw2()
 
-    def delete_channel(self, graph_frame, combo_box, curves_list):
+    def delete_channel(self, graph_frame, combo_box):
         selected_channel = combo_box.currentText()
 
         if self.channel_data[selected_channel]:
-            graph_frame.removeItem(curves_list[-1])
-            curves_list.pop()
+            if graph_frame == self.plot_widget_1:
+                self.redraw1()
+            else:
+                self.redraw2()
+
             self.channel_data.pop(selected_channel)
             combo_box.removeItem(combo_box.currentIndex())
 
+        if self.ui.channelsMenu_1.count() == 1:
+            self.curves_1 = False
+        if self.ui.channelsMenu_2.count() == 1:
+            self.curves_2 = False
+
     def delete_channel_1(self):
         if self.curves_1:
-            self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1, self.curves_1)
+            self.delete_channel(self.plot_widget_1, self.ui.channelsMenu_1)
 
         if self.ui.channelsMenu_1.count() == 1:
             self.playing_port_1 = False
@@ -620,7 +630,7 @@ class SignalViewerApp(QMainWindow):
 
     def delete_channel_2(self):
         if self.curves_2:
-            self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2, self.curves_2)
+            self.delete_channel(self.plot_widget_2, self.ui.channelsMenu_2)
 
         if self.ui.channelsMenu_2.count() == 1:
             self.playing_port_2 = False
@@ -691,7 +701,7 @@ class SignalViewerApp(QMainWindow):
         else:
             return None  
 
-    def plot_csv_data(self, file_name, graph_frame, curves_list, combo_box, ):
+    def plot_csv_data(self, file_name, graph_frame, combo_box ):
         try:
             with open(file_name, 'r') as csv_file:
                 csv_reader = csv.reader(csv_file)
@@ -726,7 +736,7 @@ class SignalViewerApp(QMainWindow):
                     graph_number = 2
     
                 # get color
-                color_index = len(curves_list) % len(self.default_colors)  
+                color_index = int(combo_box.count()) % len(self.default_colors)  
                 color = self.default_colors[color_index]
 
                 # get channel name
@@ -757,7 +767,7 @@ class SignalViewerApp(QMainWindow):
         except Exception as e:
             print("Error:", str(e))
 
-    def browse_file(self, graph_frame, curves_list, combo_box, playing_port):
+    def browse_file(self, graph_frame, combo_box, playing_port):
         if self.linked:
             return
 
@@ -768,13 +778,13 @@ class SignalViewerApp(QMainWindow):
             if playing_port:
                 # If it was playing, toggle the state to "Pause" when browsing
                 self.toggle_playback_1() if graph_frame == self.plot_widget_1 else self.toggle_playback_2()
-            self.plot_csv_data(file_name, graph_frame, curves_list, combo_box)
+            self.plot_csv_data(file_name, graph_frame, combo_box)
 
     def browse_file_1(self):
-        self.browse_file(self.plot_widget_1, self.curves_1, self.ui.channelsMenu_1,self.playing_port_1)
+        self.browse_file(self.plot_widget_1, self.ui.channelsMenu_1,self.playing_port_1)
 
     def browse_file_2(self):
-        self.browse_file(self.plot_widget_2, self.curves_2, self.ui.channelsMenu_2,self.playing_port_2)
+        self.browse_file(self.plot_widget_2, self.ui.channelsMenu_2,self.playing_port_2)
 
     def toggle_playback_1(self):
         if not self.linked:
