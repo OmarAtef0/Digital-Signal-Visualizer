@@ -196,7 +196,7 @@ class SignalViewerApp(QMainWindow):
         
         self.ui.VerticalScrollBar_1.setRange(-80,80)
         self.ui.VerticalScrollBar_2.setRange(-80,80)
-        self.ui.VerticalScrollBar_1.setSingleStep(10)
+        self.ui.VerticalScrollBar_1.setSingleStep(5)
         self.ui.VerticalScrollBar_2.setSingleStep(5)
 
         self.warn1 = False
@@ -298,14 +298,12 @@ class SignalViewerApp(QMainWindow):
     
     def snapshot1_delete(self):
         self.warn1 = False
-        print(f"delete {self.snapshot1_counter-1}")
         if self.snapshot1_counter > 0:
             self.snapshot1_counter -= 1
             os.remove(f'img/graph-1-snapshots/graph{self.snapshot1_counter}.png')
         
     def snapshot2_delete(self):
         self.warn2 = False
-        print(f"delete {self.snapshot2_counter-1}")
         if self.snapshot2_counter > 0:
             self.snapshot2_counter -= 1
             os.remove(f'img/graph-2-snapshots/graph{self.snapshot2_counter}.png')
