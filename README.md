@@ -51,7 +51,7 @@ To run the application, follow these steps:
 
 ## Contributors
 
-We would like to acknowledge the following individuals for their contributions to the HaimaLab project:
+We would like to acknowledge the following individuals for their contributions:
 
 <table>
   <tr>
