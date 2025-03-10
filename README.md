@@ -4,6 +4,8 @@
 
 This desktop application is developed using Python and Qt to provide a multi-port, multi-channel signal viewer with various features. It allows users to browse and display different medical signals such as **ECG**, **EMG**, **EEG**, etc., and provides tools for signal manipulation, synchronization, and report generation.
 
+![Signal Viewer Demo](img/DEMO.png)
+
 ## Features
 
 ### Dual Graphs
